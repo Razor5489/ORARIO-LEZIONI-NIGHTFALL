@@ -1,0 +1,86 @@
+/* All styles scoped to the shortcode: compatible with WordPress themes. */
+.nf-app{--nf-ink:#25343c;--nf-gold:#b78d48;--nf-paper:#faf6eb;--nf-line:#e7ddc8;--nf-red:#8b3442;--nf-yellow:#a77d2e;--nf-blue:#325579;--nf-green:#356a58;position:relative;isolation:isolate;overflow:hidden;max-width:1240px;margin:20px auto 54px;border:1px solid #a47c42;border-radius:12px;background:var(--nf-paper);box-shadow:0 22px 64px #09141930;color:var(--nf-ink);font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.5;text-align:left}
+.nf-app *{box-sizing:border-box}
+.nf-app button{font:inherit;cursor:pointer}
+.nf-app button:focus-visible{outline:3px solid #b38a43;outline-offset:3px}
+.nf-glow{pointer-events:none;position:absolute;inset:0 0 auto;height:304px;background:radial-gradient(ellipse at 50% 0,#d3b57818,transparent 60%),linear-gradient(145deg,#1a2b36 0%,#10212c 55%,#1b2e38 100%);z-index:-1}
+.nf-glow:after{content:"";position:absolute;inset:12px;border:1px solid #b28a4442;border-bottom:0;border-radius:4px 4px 0 0}
+.nf-content{padding:43px 42px 23px}
+.nf-eyebrow{color:#dabd86;font-size:11px;font-weight:800;letter-spacing:.29em;text-align:center}
+.nf-star{color:#d4b06b;padding:0 12px;font-size:12px}
+.nf-crest{width:64px;height:69px;border:2px solid #d4b374;border-radius:7px 7px 25px 25px;margin:17px auto 10px;display:flex;align-items:center;justify-content:center;position:relative;box-shadow:inset 0 0 0 4px #b6943d29;color:#f2dbab;font-family:Georgia,serif;font-size:38px}
+.nf-crest span:last-child{position:absolute;right:8px;bottom:6px;font-size:10px}
+.nf-app h2{font-family:Georgia,"Times New Roman",serif;font-weight:400;text-align:center;font-size:clamp(31px,4vw,46px);line-height:1.18;color:#fff9ee;letter-spacing:-.035em;margin:8px 0 6px}
+.nf-app h2 em{font-weight:400;color:#e4c58b;font-style:italic}
+.nf-subtitle{text-align:center;color:#c7c9c7;font-size:13px;letter-spacing:.06em;margin:0!important}
+.nf-ornament{display:flex;align-items:center;gap:16px;justify-content:center;color:#d0b47d;margin:17px auto 28px;font-size:16px}
+.nf-ornament span{display:block;width:70px;height:1px;background:linear-gradient(90deg,transparent,#caa761)}
+.nf-ornament span:last-child{transform:rotate(180deg)}
+.nf-controls{display:flex;gap:14px;justify-content:center;max-width:620px;margin:0 auto 27px;padding:15px;border:1px solid #e5d8c0;border-radius:9px;background:#fffdf7;box-shadow:0 10px 21px #1924300c}
+.nf-control-block{flex:1;min-width:0}
+.nf-control-label{display:block;margin-bottom:8px;text-align:center;color:#7a6c56;font-size:10px;font-weight:800;letter-spacing:.16em}
+.nf-choice{display:flex;gap:4px;padding:4px;border:1px solid #e9dfcb;border-radius:6px;background:#f4f0e7}
+.nf-choice button{flex:1;min-height:36px;border:none;border-radius:4px;background:transparent;color:#5f665e;font-size:13px;font-weight:700;white-space:nowrap;transition:background .2s,color .2s}
+.nf-choice button[aria-pressed="true"]{color:#fff9e9;background:#233945;box-shadow:0 2px 4px #14242c20}
+.nf-choice button:not([aria-pressed="true"]):hover{background:#e9e0d0}
+.nf-filter-heading{display:flex;gap:18px;align-items:center;justify-content:center;color:#85704b;font-size:10px;letter-spacing:.22em;font-weight:800;text-align:center;margin-bottom:12px}
+.nf-filter-separator{color:#d0b47d;font-size:15px}
+.nf-house-filters{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-bottom:33px}
+.nf-house-filters button{display:flex;gap:8px;align-items:center;min-height:37px;border:1px solid #dcd3c2;padding:7px 12px;background:#fffcf5;border-radius:5px;color:#53616a;font-size:12px;font-weight:750;transition:.18s ease}
+.nf-house-filters button:hover{border-color:#9b804e;background:#f9efd9}
+.nf-house-filters button[aria-pressed="true"]{background:#263e4a;color:#fff;border-color:#263e4a;box-shadow:0 3px 8px #263e4a20}
+.nf-house-dot{font-size:13px}
+.nf-dot-all{color:#b99655}.nf-dot-grifondoro{color:#a63e4c}.nf-dot-tassorosso{color:#c69a32}.nf-dot-corvonero{color:#4b719b}.nf-dot-serpeverde{color:#4e9070}
+.nf-house-filters button[aria-pressed="true"] .nf-house-dot{color:#f6d790}
+.nf-section-title{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;border-bottom:1px solid #dacbb0;margin:0 0 22px;padding:0 0 13px}
+.nf-app .nf-section-title h3{font-size:25px;line-height:1.2;margin:0;color:#293b41;font-family:Georgia,serif;font-weight:400}
+.nf-section-title span{color:#8c7b62;font-size:12px;letter-spacing:.025em}
+.nf-day{margin-bottom:20px;border:1px solid #e2d7c2;border-radius:8px;background:#fffdf9;overflow:hidden;box-shadow:0 3px 13px #302b1d0a}
+.nf-day-title{padding:10px 17px;display:flex;align-items:center;gap:11px;background:linear-gradient(90deg,#efe5d2,#f8f2e8);border-bottom:1px solid #e4d8c1;color:#a88041}
+.nf-app .nf-day-title h4{font:normal 18px/1.2 Georgia,serif;margin:0;color:#3a4140}
+.nf-table-wrap{max-width:100%;overflow-x:auto;scrollbar-color:#c8b99f #f7f2e9}
+.nf-table{width:100%;min-width:800px;border-collapse:separate;border-spacing:0;table-layout:fixed;font-size:13px;margin:0}
+.nf-table th,.nf-table td{border-bottom:1px solid #eee7db;border-right:1px solid #f0eae0;padding:12px 11px;vertical-align:middle;text-align:center}
+.nf-table thead th{background:#f5efe4;color:#72634b;font-size:10px;font-weight:850;letter-spacing:.05em}
+.nf-table thead th:first-child{width:145px;text-align:left;padding-left:18px}
+.nf-table tbody th{font-size:12px;color:#635d53;font-weight:750;letter-spacing:.01em;text-align:left;padding-left:18px;background:#fcfaf6;white-space:nowrap}
+.nf-table tbody tr:last-child td,.nf-table tbody tr:last-child th{border-bottom:0}
+.nf-table th:last-child,.nf-table td:last-child{border-right:0}
+.nf-table .nf-th-grifondoro{box-shadow:inset 0 3px var(--nf-red)}
+.nf-table .nf-th-tassorosso{box-shadow:inset 0 3px var(--nf-yellow)}
+.nf-table .nf-th-corvonero{box-shadow:inset 0 3px var(--nf-blue)}
+.nf-table .nf-th-serpeverde{box-shadow:inset 0 3px var(--nf-green)}
+.nf-lesson{display:block;font-weight:750;color:#293b3e;line-height:1.3;overflow-wrap:anywhere}
+.nf-free{color:#a79d91;font-size:12px;font-weight:450;font-style:italic}
+.nf-cell-grifondoro .nf-lesson:not(.nf-free){color:#813742}
+.nf-cell-tassorosso .nf-lesson:not(.nf-free){color:#8b6925}
+.nf-cell-corvonero .nf-lesson:not(.nf-free){color:#345a7f}
+.nf-cell-serpeverde .nf-lesson:not(.nf-free){color:#316b53}
+.nf-house-view .nf-table{min-width:680px}
+.nf-house-view .nf-table thead th:first-child{width:112px}
+.nf-house-view .nf-table td{height:83px;vertical-align:top;padding-top:15px}
+.nf-house-view .nf-table thead th{box-shadow:inset 0 3px #bb9e6f}
+.nf-house-view .nf-table tbody th{font-size:12px;vertical-align:middle}
+.nf-house-view .nf-cell-time{display:block;font-size:10px;color:#999186;margin-bottom:6px;line-height:1.2;white-space:nowrap;font-weight:650}
+.nf-house-ribbon{display:inline-flex;gap:10px;align-items:center;padding:5px 11px;border-radius:5px;margin-bottom:13px;background:#f1e9db;color:#766546;font-size:12px;font-weight:800}
+.nf-house-ribbon.nf-ribbon-grifondoro{color:#813742;border-left:3px solid var(--nf-red)}
+.nf-house-ribbon.nf-ribbon-tassorosso{color:#86651f;border-left:3px solid var(--nf-yellow)}
+.nf-house-ribbon.nf-ribbon-corvonero{color:#345a7f;border-left:3px solid var(--nf-blue)}
+.nf-house-ribbon.nf-ribbon-serpeverde{color:#316b53;border-left:3px solid var(--nf-green)}
+.nf-teachers{margin-top:30px;border:1px solid #e0d4bc;border-radius:8px;background:#fffdf7;padding:22px}
+.nf-teachers .nf-section-title{margin-bottom:15px}
+.nf-teachers-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.nf-teacher{padding:16px 15px;border:1px solid #e8decd;border-radius:7px;background:white;min-height:110px}
+.nf-teacher h4{font:normal 17px/1.2 Georgia,serif!important;color:#3c4745!important;margin:0 0 12px!important;padding:0 0 9px;border-bottom:1px solid #eee5d6}
+.nf-teacher ul{padding:0!important;margin:0!important;list-style:none!important}
+.nf-teacher li{list-style:none!important;display:flex;flex-direction:column;gap:1px;margin:0 0 10px;padding:0}
+.nf-teacher li:last-child{margin-bottom:0}
+.nf-teacher-role{font-size:10px;color:#907d60;font-weight:750;letter-spacing:.04em;text-transform:uppercase}
+.nf-teacher-name{font-size:13px;color:#3a494d;font-weight:700}
+.nf-teacher-empty{font-size:12px;color:#8a8173;font-style:italic}
+.nf-footer{margin-top:19px;padding:20px 1px 0;border-top:1px solid #dfd1b9;display:flex;justify-content:space-between;align-items:center;gap:10px;color:#907d60;font-size:11px;letter-spacing:.03em}
+.nf-footer button{background:transparent;color:#705a32;border:1px solid #d1bb94;border-radius:4px;padding:7px 12px;font-size:12px;font-weight:750;letter-spacing:0}
+.nf-footer button:hover{background:#f0e3cc}
+@media(max-width:750px){.nf-app{margin:8px 0 25px;border-radius:4px}.nf-content{padding:31px 14px 15px}.nf-glow{height:290px}.nf-eyebrow{font-size:9px;letter-spacing:.18em}.nf-controls{padding:11px;gap:8px;margin-top:10px}.nf-ornament{margin-bottom:20px}.nf-choice button{font-size:11px;min-height:36px}.nf-filter-heading{font-size:9px}.nf-house-filters{gap:6px;margin-bottom:23px}.nf-house-filters button{padding:7px 9px;font-size:11px}.nf-app .nf-section-title h3{font-size:21px}.nf-table{min-width:725px}.nf-table th,.nf-table td{padding:10px 8px}.nf-day-title{padding:10px 13px}.nf-footer{flex-wrap:wrap}.nf-teachers-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:440px){.nf-controls{flex-wrap:wrap}.nf-control-block{flex-basis:100%}.nf-choice button{font-size:12px}.nf-teachers-grid{grid-template-columns:1fr}}
+@media print{body{background:#fff!important}.nf-app{border:0;box-shadow:none;max-width:none;margin:0}.nf-glow{height:120px}.nf-content{padding:16px}.nf-crest{display:none}.nf-app h2{font-size:28px}.nf-eyebrow{color:#000}.nf-subtitle{color:#fff}.nf-ornament,.nf-controls,.nf-filter-heading,.nf-house-filters,.nf-print,.nf-teachers{display:none!important}.nf-day{break-inside:avoid;box-shadow:none;margin-bottom:10px}.nf-table{min-width:0;font-size:10px}.nf-table th,.nf-table td{padding:6px}.nf-table tbody th{padding-left:8px}.nf-table thead th:first-child{width:100px}.nf-app .nf-section-title h3{font-size:20px}.nf-footer{font-size:9px}}
