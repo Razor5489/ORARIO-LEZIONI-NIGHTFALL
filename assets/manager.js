@@ -20,6 +20,7 @@
   let day = DAYS[0];
   let page = 'orari';
   let busy = false;
+  let accessRole = 'admin';
 
   const dialog = document.createElement('dialog');
   dialog.id = 'nf-manage-dialog';
@@ -33,11 +34,11 @@
     <div class="nf-manager-main">
       <section id="nf-manager-login" class="nf-auth">
         <h3>Accesso alla gestione</h3>
-        <p class="nf-help">Inserisci la <strong>password di gestione</strong>, come nel Regolamento scolastico. Le credenziali vengono verificate dal servizio protetto e non sono pubblicate nel sito.</p>
-        <label for="nf-admin-password" class="nf-label">Password di gestione</label>
+        <p class="nf-help">Inserisci la <strong>password riservata ai professori</strong> per modificare gli orari. La password di amministrazione resta valida e consente anche di gestire il corpo docenti. Nessuna password è pubblicata nel sito.</p>
+        <label for="nf-admin-password" class="nf-label">Password docenti o amministratore</label>
         <input type="password" id="nf-admin-password" placeholder="Inserisci la password" autocomplete="current-password" maxlength="256">
         <div class="nf-flex nf-gap"><button type="button" id="nf-login-btn" class="nf-btn primary">Accedi alla gestione</button></div>
-        <p class="nf-help">Puoi modificare le settimane e i professori. Con <strong>Pubblica online</strong> le modifiche vengono salvate nel repository GitHub dal servizio protetto.</p>
+        <p class="nf-help">I professori possono aggiornare materie e fasce orarie, senza accedere alla gestione del corpo docenti. Premi <strong>Pubblica online</strong> per rendere le modifiche visibili agli studenti.</p>
         <p id="nf-login-status" class="nf-status" role="status" aria-live="polite"></p>
       </section>
       <section id="nf-editor" hidden>
@@ -120,9 +121,12 @@
     }
     return result;
   }
-  function setEditorState(loaded, newSha) {
+  function setEditorState(loaded, newSha, role) {
     if (!valid(loaded)) throw new Error('Il file dati GitHub non ha il formato atteso.');
     sha = newSha;
+    accessRole = role === "docente" ? "docente" : "admin";
+    const teacherNav = $('nf-editor-nav').querySelector('[data-page="docenti"]');
+    if (teacherNav) teacherNav.hidden = accessRole !== "admin";
     original = clone(loaded);
     draft = clone(loaded);
     period = '1-1';
@@ -142,8 +146,8 @@
     status('Verifica della password…',false,false,'nf-login-status');
     try {
       const remote = await github();
-      setEditorState(remote.document,remote.sha);
-      status('Accesso riuscito. Puoi modificare i dati e pubblicarli.',false,true);
+      setEditorState(remote.document,remote.sha,remote.role);
+      status(accessRole === 'docente' ? 'Accesso docenti riuscito: puoi modificare e pubblicare gli orari.' : 'Accesso amministratore riuscito: gestione completa attiva.',false,true);
     } catch (error) {
       token = '';
       status(error.message,true,false,'nf-login-status');
@@ -192,8 +196,7 @@
         <thead><tr><th>Inizio</th><th>Fine</th>${Object.values(HOUSES).map(h => '<th>' + h + '</th>').join('')}</tr></thead>
         <tbody>${tableRows}</tbody>
       </table></div>
-      <div class="nf-flex nf-gap"><button type="button" class="nf-btn" id="nf-copy-week">Copia un'altra settimana</button>
-      <button type="button" class="nf-btn danger" id="nf-reset-week">Imposta tutte le lezioni su Tempo libero</button></div>
+      <div class="nf-flex nf-gap">${accessRole === 'admin' ? '<button type="button" class="nf-btn" id="nf-copy-week">Copia un\'altra settimana</button><button type="button" class="nf-btn danger" id="nf-reset-week">Imposta tutte le lezioni su Tempo libero</button>' : ''}</div>
       <p class="nf-note">Questi pulsanti agiscono soltanto sulla settimana selezionata. Le modifiche restano in bozza fino a «Pubblica online».</p>
     </section>`;
   }
@@ -214,6 +217,7 @@
   function render() {
     $('nf-editor-nav').querySelectorAll('button').forEach(button =>
       button.setAttribute('aria-pressed',String(button.dataset.page === page)));
+    if (accessRole !== 'admin' && page === 'docenti') page = 'orari';
     $('nf-editor-content').innerHTML = page === 'orari' ? renderSchedule() : renderTeachers();
     dirtyState();
   }
@@ -246,7 +250,7 @@
     }
     const key = element.dataset.teacher;
     const role = element.dataset.role;
-    if (key && role && role !== 'subject-name') {
+    if (key && role && role !== 'subject-name' && accessRole === 'admin') {
       draft.teachers[key][role] = element.value;
       dirtyState();
     }
@@ -255,8 +259,8 @@
     const element = event.target;
     if (element.id === 'nf-edit-period') {period = element.value; render();return;}
     if (element.id === 'nf-edit-day') {day = element.value; render();return;}
-    if (element.id === 'nf-show-teachers') {draft.show_teachers = element.checked;dirtyState();return;}
-    if (element.dataset.role === 'subject-name') {teacherRename(element.dataset.teacher,element.value);return;}
+    if (element.id === 'nf-show-teachers') { if (accessRole !== 'admin') return; draft.show_teachers = element.checked;dirtyState();return;}
+    if (element.dataset.role === 'subject-name') {if (accessRole !== 'admin') return;teacherRename(element.dataset.teacher,element.value);return;}
     if (element.dataset.field === 'subject') {
       const row = draft.schedules[period][Number(element.dataset.row)];
       row.subjects[element.dataset.house] = normal(element.value);
@@ -322,6 +326,7 @@
       draft.updated_at = new Date().toISOString();
       const result = await github('PUT',{document:draft,sha});
       sha = result.sha || sha;
+      if (result.document) draft = clone(result.document);
       original = clone(draft);
       dirtyState();
       if (typeof window.nfUpdatePublic === 'function') window.nfUpdatePublic(clone(draft));
@@ -346,7 +351,7 @@
     if (busy) return;
     if (changed() && !confirm('Hai modifiche non pubblicate. Uscire e perderle?')) return;
     dialog.close();
-    token = ''; sha = ''; draft = null; original = null;
+    token = ''; sha = ''; draft = null; original = null; accessRole = 'admin';
     $('nf-admin-password').value = '';
     $('nf-editor').hidden = true;
     $('nf-manager-login').hidden = false;
@@ -364,15 +369,16 @@
   $('nf-editor-nav').addEventListener('click',event => {
     const button = event.target.closest('button[data-page]');
     if (!button) return;
+    if (accessRole !== 'admin' && button.dataset.page === 'docenti') return;
     page = button.dataset.page;render();
   });
   $('nf-editor-content').addEventListener('input',onInput);
   $('nf-editor-content').addEventListener('change',onChange);
   $('nf-editor-content').addEventListener('click',event => {
-    if (event.target.closest('#nf-copy-week')) copyWeek();
-    if (event.target.closest('#nf-reset-week')) resetWeek();
-    if (event.target.closest('#nf-add-teacher')) addTeacher();
+    if (event.target.closest('#nf-copy-week') && accessRole === 'admin') copyWeek();
+    if (event.target.closest('#nf-reset-week') && accessRole === 'admin') resetWeek();
+    if (event.target.closest('#nf-add-teacher') && accessRole === 'admin') addTeacher();
     const remove = event.target.closest('[data-remove-teacher]');
-    if (remove) removeTeacher(remove.dataset.removeTeacher);
+    if (remove && accessRole === 'admin') removeTeacher(remove.dataset.removeTeacher);
   });
 })();
