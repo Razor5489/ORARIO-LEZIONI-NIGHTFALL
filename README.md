@@ -40,6 +40,14 @@ Le variazioni vengono applicate come incrementi/decrementi cumulativi. Se due pr
 
 I punteggi iniziali sono `0` per ogni Casa; non viene modificato alcun orario già inserito.
 
+## Registro delle lezioni svolte
+
+Nella **stessa pagina degli orari** è presente una sezione **Registro delle lezioni svolte**, consultabile dagli studenti. I filtri esistenti per anno, settimana e Casa si applicano anche al registro.
+
+Per registrare una lezione, i professori entrano in **Gestisci orari → Lezioni svolte** con la password già in uso. Inseriscono la data effettiva, l'anno e la settimana, il giorno e la fascia oraria, una o più Case coinvolte, la materia, il nome del professore e, facoltativamente, l'argomento e un breve resoconto. **Segna come svolta** aggiunge la registrazione alla bozza; **Pubblica online** la rende visibile agli studenti.
+
+Ogni lezione ha un identificativo indipendente: più professori possono registrare lezioni contemporaneamente senza perdere i dati altrui. I docenti possono aggiungere registrazioni; la **Presidenza** può anche rimuovere quelle errate dal pannello. I precedenti orari, la classifica Punti Casa e il corpo docenti rimangono invariati.
+
 ## Amministrazione
 
 Il backend si trova nel repository [Regolamento-scolastico](https://github.com/Razor5489/Regolamento-scolastico) ed è distribuito nel progetto Vercel `nightfall-regolamento-professori`. Per gli orari usa queste variabili d'ambiente:
