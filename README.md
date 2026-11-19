@@ -1,10 +1,12 @@
 # Nightfall RP — Orario delle Lezioni
 
-Orari scolastici di Hogwarts, consultabili dagli studenti e modificabili da WordPress.
+Orari scolastici di Hogwarts, consultabili dagli studenti e modificabili direttamente dal sito GitHub Pages tramite il pulsante **Gestisci orari**. Il plugin WordPress resta disponibile come versione separata.
 
 ## Contenuto del repository
 
-- `index.html`: sito statico per gli studenti, compatibile con GitHub Pages (non salva modifiche).
+- `index.html`: sito pubblico GitHub Pages con pulsante **Gestisci orari**.
+- `orari.json`: programmi delle quattro settimane ed elenco modificabile dei professori.
+- `assets/online.js`, `assets/manager.js` e `assets/online.css`: visualizzazione e pannello di gestione.
 - `nightfall-orari/nightfall-orari.php`: plugin WordPress.
 - `nightfall-orari/assets/`: stile e funzionalità dell'interfaccia pubblica e di amministrazione.
 - `nightfall-orari/data/seed.json`: quattro calendari iniziali e corpo docenti.
@@ -21,9 +23,25 @@ Il sito pubblico si trova nel file `index.html` alla radice del repository.
 3. Seleziona **Branch: main** e **Folder: /(root)**, poi clicca **Save**.
 4. GitHub pubblicherà il sito all'indirizzo **https://razor5489.github.io/ORARIO-LEZIONI-NIGHTFALL/**. L'indirizzo funziona solo dopo che GitHub Pages è attivo e la pubblicazione è riuscita.
 
-Le successive modifiche a `index.html` pubblicate su `main` aggiorneranno automaticamente la pagina.
+Le successive modifiche al ramo `main`, incluso `orari.json`, aggiornano automaticamente la pagina.
 Il sito GitHub Pages è statico e **non** si aggiorna quando modifichi i dati nel foglio Google o nel plugin WordPress: è necessario aggiornare i dati inclusi in `index.html`.
 Per gestire le lezioni con un pannello che salva le modifiche, usa il plugin su un hosting WordPress.
+
+## Gestisci orari direttamente sul sito
+
+Il pulsante **⚙ Gestisci orari** è disponibile nella parte superiore del sito pubblico.
+
+1. Clicca su **Gestisci orari**.
+2. Inserisci un token personale GitHub autorizzato per il repository (NON la password GitHub o quella del Regolamento scolastico).
+3. Nella sezione **Orario lezioni** seleziona anno, settimana e giorno, quindi modifica orari e materie delle quattro Case.
+4. Nella sezione **Corpo docenti** puoi modificare professori, materie e visibilità dell'elenco.
+5. Clicca **Pubblica online**: il sito invia un commit a `orari.json` e GitHub Pages aggiorna gli orari degli studenti.
+
+**Come creare il token:** su https://github.com/settings/personal-access-tokens/new scegli il proprietario `Razor5489`, seleziona **Only select repositories** → `ORARIO-LEZIONI-NIGHTFALL`, e imposta **Repository permissions → Contents → Read and write**. Per sicurezza concedi la scadenza più breve compatibile con le tue esigenze. Il token resta in memoria durante la gestione, non viene scritto nel repository né memorizzato nel browser.
+
+Le modifiche sono preparate in una bozza, possono essere esportate in JSON, e vengono controllate contro la versione GitHub più recente prima di pubblicare. In caso di modifiche simultanee il sito impedisce di sovrascrivere silenziosamente il lavoro altrui.
+
+> GitHub Pages non può eseguire PHP né conservare una password di amministrazione nel sito statico in modo sicuro. Per questo il pannello usa l'autorizzazione di GitHub al momento della pubblicazione. Il plugin WordPress è indipendente e non sincronizza automaticamente le modifiche fatte sul sito GitHub Pages.
 
 ## Installazione WordPress
 
