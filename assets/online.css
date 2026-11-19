@@ -56,3 +56,21 @@
 .nf-manager .nf-status-box{min-height:16px}
 @media(max-width:750px){.nf-toolbar{padding:0 12px}.nf-manager-main{padding:14px}.nf-manager-head{padding:14px}.nf-manager-head h2{font-size:21px}.nf-manager .nf-teacher-edit{grid-template-columns:repeat(2,minmax(0,1fr))}.nf-manager .nf-teacher-edit .nf-field:first-child{grid-column:1/-1}.nf-manager .nf-footerbar>*{flex:1 1 auto}}
 @media print{.nf-toolbar,.nf-manager{display:none!important}}
+
+
+/* Punti Casa — quattro stemmi originali e punteggio in evidenza */
+.nf-house-points{margin:0 0 28px;padding:22px 22px 24px;border-radius:10px;border:1px solid #d8c5a2;background:linear-gradient(135deg,#fffcf5 0%,#f5ecdc 100%);box-shadow:0 6px 24px #271f1c10}
+.nf-house-points .nf-points-heading{margin:0 0 18px;padding-bottom:12px}
+.nf-points-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}
+.nf-points-card{position:relative;display:flex;flex-direction:column;align-items:center;min-width:0;min-height:216px;padding:13px 8px 16px;border:1px solid #dacdb5;border-top:4px solid var(--points-color);border-radius:9px;background:linear-gradient(165deg,#fffefc,#f7f0e5);box-shadow:0 3px 12px #382d1b0d;text-align:center}
+.nf-points-grifondoro{--points-color:#973c4b}
+.nf-points-tassorosso{--points-color:#b38a32}
+.nf-points-corvonero{--points-color:#3e6394}
+.nf-points-serpeverde{--points-color:#32694f}
+.nf-points-card img{display:block;width:92px;height:99px;object-fit:contain;margin:0 auto 9px;mix-blend-mode:multiply}
+.nf-points-card h4{margin:0 0 3px;font:normal 18px/1.2 Georgia,serif;color:#273944}
+.nf-points-number{font:600 34px/1.05 Georgia,serif;color:var(--points-color);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.nf-points-caption{font-size:11px;letter-spacing:.08em;font-weight:700;color:#8c7e69}
+.nf-points-leader{position:absolute;top:7px;right:6px;border-radius:4px;background:#f4e7b7;color:#6c5220;padding:2px 6px;font-size:9px;font-weight:800}
+@media(max-width:700px){.nf-house-points{padding:16px}.nf-points-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.nf-points-card{min-height:190px}.nf-points-card img{width:80px;height:84px}.nf-points-number{font-size:29px}}
+@media(max-width:380px){.nf-points-card h4{font-size:16px}}
