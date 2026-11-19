@@ -1,62 +1,46 @@
-# Nightfall RP — Orario delle Lezioni
+# Nightfall RP — Orario delle lezioni
 
-Orari scolastici di Hogwarts, consultabili dagli studenti e modificabili direttamente dal sito GitHub Pages tramite il pulsante **Gestisci orari**. Il plugin WordPress resta disponibile come versione separata.
+Sito degli orari scolastici di Hogwarts, consultabile dagli studenti su GitHub Pages e modificabile dai professori tramite un pannello protetto da password.
+
+## Sito pubblico
+
+https://razor5489.github.io/ORARIO-LEZIONI-NIGHTFALL/
+
+Il sito mostra i programmi di **1° e 2° anno**, **settimana 1 e 2**, dal lunedì al venerdì, per **Grifondoro, Tassorosso, Corvonero e Serpeverde**. Le lezioni non ancora assegnate sono chiamate **Tempo libero**.
+
+I dati pubblici sono letti da `https://nightfall-regolamento-professori.vercel.app/api/orari-public`, che restituisce gli orari dall'archivio Vercel Blob privato. Le modifiche pubblicate sono visibili agli studenti senza effettuare commit a GitHub né attendere nuove distribuzioni GitHub Pages.
+
+## Gestisci orari
+
+Clicca sul pulsante **⚙ Gestisci orari** nella pagina pubblica. Sono disponibili due livelli di accesso:
+
+- **Password professori**: consente di modificare gli orari, le materie e le fasce orarie di tutte le Case e le settimane; non consente di modificare l'elenco del personale scolastico.
+- **Password amministratore**: conserva l'accesso alla gestione completa degli orari, del corpo docenti e delle operazioni massive.
+
+Dopo le modifiche, clicca **Pubblica online**. Il pannello salva tramite `https://nightfall-regolamento-professori.vercel.app/api/orari`, con controllo della versione (ETag) per evitare sovrascritture accidentali. **Scarica backup JSON** permette di conservare una copia della bozza.
+
+Le password e il token di accesso al Blob non sono presenti nel codice pubblico: Vercel li conserva in variabili d'ambiente protette. Non è necessario concedere ai professori accesso a GitHub, Vercel o Google.
+
+## Amministrazione
+
+Il backend si trova nel repository [Regolamento-scolastico](https://github.com/Razor5489/Regolamento-scolastico) ed è distribuito nel progetto Vercel `nightfall-regolamento-professori`. Per gli orari usa queste variabili d'ambiente:
+
+- `ORARI_DOCENTI_PASSWORD`: password dedicata da condividere ai professori
+- `ADMIN_PASSWORD`: password generale amministratore (già usata per il Regolamento scolastico)
+- `BLOB_READ_WRITE_TOKEN`: credenziale del Blob privato `nightfall-orari-dati`, collegato al progetto
+
+Quando un professore non deve più avere accesso, cambia `ORARI_DOCENTI_PASSWORD` su Vercel e ridistribuisci il progetto. La password condivisa non distingue i professori individualmente.
 
 ## Contenuto del repository
 
-- `index.html`: sito pubblico GitHub Pages con pulsante **Gestisci orari**.
-- `orari.json`: programmi delle quattro settimane ed elenco modificabile dei professori.
-- `assets/online.js`, `assets/manager.js` e `assets/online.css`: visualizzazione e pannello di gestione.
-- `nightfall-orari/nightfall-orari.php`: plugin WordPress.
-- `nightfall-orari/assets/`: stile e funzionalità dell'interfaccia pubblica e di amministrazione.
-- `nightfall-orari/data/seed.json`: quattro calendari iniziali e corpo docenti.
-- `Nightfall-Orari-WordPress.zip`: plugin pronto da installare da WordPress.
+- `index.html`: sito pubblico su GitHub Pages
+- `assets/online.js`: visualizzazione orari dal servizio pubblico
+- `assets/manager.js`: pannello e gestione protetta
+- `assets/online.css`: stile dell'amministrazione
+- `orari.json`: copia iniziale di riferimento, non più usata come archivio modificabile
+- `nightfall-orari/`: versione alternativa sotto forma di plugin WordPress
+- `Nightfall-Orari-WordPress.zip`: plugin installabile separatamente
 
-## Pubblicazione su GitHub Pages
+Il foglio Google [Orario Nightfall](https://docs.google.com/spreadsheets/d/1bAdULktWYNNLEwTDhGuNIwvoLWqDcLDFYwAUSm8NHPc/edit) e il plugin WordPress non sono sincronizzati automaticamente con questo portale.
 
-Il sito pubblico si trova nel file `index.html` alla radice del repository.
-
-**Attivazione iniziale (solo una volta, dall'account proprietario del repository):**
-
-1. Apri [Settings → Pages](https://github.com/Razor5489/ORARIO-LEZIONI-NIGHTFALL/settings/pages).
-2. In **Build and deployment**, seleziona **Source: Deploy from a branch**.
-3. Seleziona **Branch: main** e **Folder: /(root)**, poi clicca **Save**.
-4. GitHub pubblicherà il sito all'indirizzo **https://razor5489.github.io/ORARIO-LEZIONI-NIGHTFALL/**. L'indirizzo funziona solo dopo che GitHub Pages è attivo e la pubblicazione è riuscita.
-
-Le successive modifiche al ramo `main`, incluso `orari.json`, aggiornano automaticamente la pagina. Il sito legge dinamicamente i dati da `orari.json`. La modifica del foglio Google o del plugin WordPress non aggiorna automaticamente il sito GitHub Pages: sono due sistemi indipendenti.
-
-## Gestisci orari direttamente dal sito
-
-Il pulsante **⚙ Gestisci orari** è presente nella pagina pubblica.
-
-- **Accesso professori:** utilizza una password esclusiva del registro orari, distinta da quella del Regolamento scolastico. Consente di modificare materie e fasce orarie delle settimane del 1° e del 2° anno, ma non di cambiare l'elenco del corpo docenti. Le operazioni massive di copia e svuotamento della settimana non sono presentate ai professori.
-- **Accesso amministratore:** continua a usare la password generale del Regolamento scolastico. Consente di gestire anche il corpo docenti, la loro visibilità e le operazioni massive.
-- **Pubblica online:** salva le modifiche nel file `orari.json` del repository tramite il servizio protetto su Vercel. Gli studenti visualizzano gli aggiornamenti tramite GitHub Pages.
-- **Backup:** permette di esportare il contenuto JSON prima di salvare.
-
-La password dei professori è una variabile sensibile denominata `ORARI_DOCENTI_PASSWORD`, conservata sul server nel progetto Vercel **nightfall-regolamento-professori**, non pubblicata in GitHub né nella pagina degli studenti. Può essere cambiata dalle impostazioni Vercel, seguita da una nuova distribuzione del progetto. Il servizio utilizza inoltre la variabile privata `GITHUB_TOKEN` con permessi **Contents: Read and write** sul repository `Razor5489/ORARIO-LEZIONI-NIGHTFALL`.
-
-**Nota sulla condivisione:** tutti coloro che ricevono la password dei professori possono cambiare gli orari di tutte le Case e settimane. Per revocare l'accesso a una persona è necessario cambiare la password condivisa. Il sistema non distingue automaticamente chi ha effettuato una modifica.
-
-## Installazione WordPress
-
-1. Scarica `Nightfall-Orari-WordPress.zip` dal repository.
-2. In WordPress vai su **Plugin → Aggiungi nuovo → Carica plugin** e seleziona lo ZIP.
-3. Attiva **Nightfall RP – Orari delle Lezioni**.
-4. Vai su **Orari Nightfall → Strumenti e pubblicazione** e usa **Crea pagina pubblica automaticamente**, oppure inserisci lo shortcode `[nightfall_orari]` in una pagina.
-
-## Funzioni
-
-- Programmi distinti per **1° e 2° anno**, **settimana 1 e 2**.
-- **Grifondoro, Tassorosso, Corvonero, Serpeverde** con materie per fascia.
-- Fasce iniziali **21:30–23:00**, con 15 minuti di lezione e intervalli.
-- Etichetta **«Tempo libero»** per lezioni non assegnate.
-- **Corpo docenti** modificabile, mostrato agli studenti se l'opzione è abilitata.
-- Pannello amministrativo WordPress con autorizzazione `manage_options`.
-- Importazione ed esportazione CSV, duplicazione, azzeramento e ripristino settimane.
-
-I dati iniziali sono una copia dal foglio Google dell'utente, non una sincronizzazione automatica. Le modifiche effettuate in WordPress sono salvate nel database del sito WordPress, non su GitHub Pages.
-
-**Importante:** GitHub Pages può servire l'anteprima statica, ma non può eseguire PHP/WordPress: per il pannello amministrativo occorre un hosting WordPress.
-
-Fonte: [foglio Google di Nightfall](https://docs.google.com/spreadsheets/d/1bAdULktWYNNLEwTDhGuNIwvoLWqDcLDFYwAUSm8NHPc/edit).
+> Il sito pubblico resta ospitato su GitHub Pages. Solo i dati modificabili vengono conservati in Vercel Blob, per consentire la pubblicazione online con password senza dipendere dai permessi di scrittura del token GitHub.
