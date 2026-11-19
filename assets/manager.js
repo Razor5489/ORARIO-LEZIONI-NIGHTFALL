@@ -319,10 +319,10 @@
     try {validateBeforePublish();} catch(error) {status(error.message,true);return;}
     if (!changed()) {status('Nessuna modifica da pubblicare.');return;}
     if (!confirm('Pubblicare le modifiche degli orari e del corpo docenti per tutti gli studenti?')) return;
-    setBusy(true);status('Controllo della versione e pubblicazione su GitHub…');
+    setBusy(true);status('Verifica e salvataggio degli orari nell’archivio protetto…');
     try {
       const remote = await github();
-      if (remote.sha !== sha) throw new Error('Qualcuno ha già modificato gli orari su GitHub. Scarica un backup della bozza ed esci, poi rientra per evitare sovrascritture.');
+      if (remote.sha !== sha) throw new Error('Gli orari sono stati modificati nel frattempo. Scarica un backup della bozza ed esci, poi rientra per evitare sovrascritture.');
       draft.updated_at = new Date().toISOString();
       const result = await github('PUT',{document:draft,sha});
       sha = result.sha || sha;
