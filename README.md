@@ -4,11 +4,26 @@ Orari scolastici di Hogwarts, consultabili dagli studenti e modificabili da Word
 
 ## Contenuto del repository
 
-- `index.html`: anteprima statica interattiva per gli studenti (non salva modifiche).
+- `index.html`: sito statico per gli studenti, compatibile con GitHub Pages (non salva modifiche).
 - `nightfall-orari/nightfall-orari.php`: plugin WordPress.
 - `nightfall-orari/assets/`: stile e funzionalità dell'interfaccia pubblica e di amministrazione.
 - `nightfall-orari/data/seed.json`: quattro calendari iniziali e corpo docenti.
 - `Nightfall-Orari-WordPress.zip`: plugin pronto da installare da WordPress.
+
+## Pubblicazione su GitHub Pages
+
+Il sito pubblico si trova nel file `index.html` alla radice del repository.
+
+**Attivazione iniziale (solo una volta, dall'account proprietario del repository):**
+
+1. Apri [Settings → Pages](https://github.com/Razor5489/ORARIO-LEZIONI-NIGHTFALL/settings/pages).
+2. In **Build and deployment**, seleziona **Source: Deploy from a branch**.
+3. Seleziona **Branch: main** e **Folder: /(root)**, poi clicca **Save**.
+4. GitHub pubblicherà il sito all'indirizzo **https://razor5489.github.io/ORARIO-LEZIONI-NIGHTFALL/**. L'indirizzo funziona solo dopo che GitHub Pages è attivo e la pubblicazione è riuscita.
+
+Le successive modifiche a `index.html` pubblicate su `main` aggiorneranno automaticamente la pagina.
+Il sito GitHub Pages è statico e **non** si aggiorna quando modifichi i dati nel foglio Google o nel plugin WordPress: è necessario aggiornare i dati inclusi in `index.html`.
+Per gestire le lezioni con un pannello che salva le modifiche, usa il plugin su un hosting WordPress.
 
 ## Installazione WordPress
 
