@@ -30,6 +30,16 @@ Dopo le modifiche, clicca **Pubblica online**. Il pannello salva tramite `https:
 
 Le password e il token di accesso al Blob non sono presenti nel codice pubblico: Vercel li conserva in variabili d'ambiente protette. Non è necessario concedere ai professori accesso a GitHub, Vercel o Google.
 
+## Punti Casa
+
+Nella **stessa pagina degli orari** gli studenti vedono la classifica aggiornata di **Grifondoro, Tassorosso, Corvonero e Serpeverde**, ciascuna con il proprio stemma fornito dallo staff. Gli stemmi sono pubblicati come risorsa grafica ottimizzata in `assets/stemmi/case-sprite.webp`.
+
+Per assegnare o togliere punti, apri **Gestisci orari → Punti Casa**, inserisci il numero di punti, premi **+ Assegna** oppure **− Sottrai**, quindi **Pubblica online**. La password docenti è sufficiente: non serve accedere a GitHub.
+
+Le variazioni vengono applicate come incrementi/decrementi cumulativi. Se due professori assegnano punti anche alla stessa Casa contemporaneamente, il sistema **somma entrambe le variazioni** invece di sovrascrivere il punteggio dell'altro.
+
+I punteggi iniziali sono `0` per ogni Casa; non viene modificato alcun orario già inserito.
+
 ## Amministrazione
 
 Il backend si trova nel repository [Regolamento-scolastico](https://github.com/Razor5489/Regolamento-scolastico) ed è distribuito nel progetto Vercel `nightfall-regolamento-professori`. Per gli orari usa queste variabili d'ambiente:
