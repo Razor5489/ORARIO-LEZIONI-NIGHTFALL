@@ -27,21 +27,20 @@ Le successive modifiche al ramo `main`, incluso `orari.json`, aggiornano automat
 Il sito GitHub Pages è statico e **non** si aggiorna quando modifichi i dati nel foglio Google o nel plugin WordPress: è necessario aggiornare i dati inclusi in `index.html`.
 Per gestire le lezioni con un pannello che salva le modifiche, usa il plugin su un hosting WordPress.
 
-## Gestisci orari direttamente sul sito
+## Gestisci orari direttamente dal sito
 
-Il pulsante **⚙ Gestisci orari** è disponibile nella parte superiore del sito pubblico.
+Usa il pulsante **⚙ Gestisci orari** visibile nella pagina pubblica:
 
-1. Clicca su **Gestisci orari**.
-2. Inserisci un token personale GitHub autorizzato per il repository (NON la password GitHub o quella del Regolamento scolastico).
-3. Nella sezione **Orario lezioni** seleziona anno, settimana e giorno, quindi modifica orari e materie delle quattro Case.
-4. Nella sezione **Corpo docenti** puoi modificare professori, materie e visibilità dell'elenco.
-5. Clicca **Pubblica online**: il sito invia un commit a `orari.json` e GitHub Pages aggiorna gli orari degli studenti.
+1. Inserisci **la stessa password di gestione del Regolamento scolastico**.
+2. Apri **Orario lezioni** per selezionare l'anno, la settimana e il giorno; modifica orari e materie per ogni Casa.
+3. Apri **Corpo docenti** per modificare professori, materie e visibilità dell'elenco.
+4. Premi **Pubblica online** per salvare le modifiche in `orari.json` su GitHub.
 
-**Come creare il token:** su https://github.com/settings/personal-access-tokens/new scegli il proprietario `Razor5489`, seleziona **Only select repositories** → `ORARIO-LEZIONI-NIGHTFALL`, e imposta **Repository permissions → Contents → Read and write**. Per sicurezza concedi la scadenza più breve compatibile con le tue esigenze. Il token resta in memoria durante la gestione, non viene scritto nel repository né memorizzato nel browser.
+Le modifiche saranno pubblicate tramite GitHub Pages. I dati rimangono modificabili senza accedere a GitHub.
 
-Le modifiche sono preparate in una bozza, possono essere esportate in JSON, e vengono controllate contro la versione GitHub più recente prima di pubblicare. In caso di modifiche simultanee il sito impedisce di sovrascrivere silenziosamente il lavoro altrui.
+### Sicurezza e configurazione
 
-> GitHub Pages non può eseguire PHP né conservare una password di amministrazione nel sito statico in modo sicuro. Per questo il pannello usa l'autorizzazione di GitHub al momento della pubblicazione. Il plugin WordPress è indipendente e non sincronizza automaticamente le modifiche fatte sul sito GitHub Pages.
+L'autenticazione e la scrittura su GitHub vengono gestite dal servizio Vercel esistente del Regolamento scolastico (`https://nightfall-regolamento-professori.vercel.app/api/orari`). La password **non è salvata nei file del sito**, e la credenziale per pubblicare su GitHub rimane sul server Vercel. Nessuna credenziale è richiesta agli studenti. Il token GitHub configurato nel progetto Vercel deve avere il permesso di scrittura anche sul repository `Razor5489/ORARIO-LEZIONI-NIGHTFALL`; in caso contrario, la pubblicazione viene rifiutata dal servizio. La password viene mantenuta in memoria soltanto nella sessione di gestione; non viene salvata in localStorage.
 
 ## Installazione WordPress
 
