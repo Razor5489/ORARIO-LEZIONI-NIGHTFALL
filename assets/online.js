@@ -44,6 +44,25 @@
     return `<div class="nf-section-title"><h3>Corpo docenti</h3><span>Elenco ufficiale · Aggiornabile dalla Presidenza</span></div><div class="nf-teachers-grid">${items}</div>`;
   }
 
+  const HOUSE_POINTS_ORDER=['grifondoro','tassorosso','corvonero','serpeverde'];
+  function renderPoints(points) {
+    const values=HOUSE_POINTS_ORDER.map(h=>Number.isSafeInteger(points?.[h]) ? points[h] : 0);
+    const best=Math.max(...values);
+    const tied=values.filter(n=>n===best).length>1;
+    return '<div class="nf-section-title nf-points-heading"><h3>✦ Punti Casa</h3><span>Classifica delle quattro Case di Hogwarts</span></div>' +
+      '<div class="nf-points-grid">' + HOUSE_POINTS_ORDER.map((house,index)=>{
+        const name=HOUSES[house];
+        const score=values[index];
+        const leader=!tied && score===best;
+        return '<article class="nf-points-card nf-points-'+house+'" aria-label="'+esc(name)+': '+score+' punti">' +
+          (leader?'<span class="nf-points-leader">✦ In testa</span>':'')+
+          '<img src="./assets/stemmi/'+house+'.webp" width="120" height="120" loading="lazy" alt="Stemma di '+esc(name)+'">' +
+          '<h4>'+esc(name)+'</h4>'+
+          '<div class="nf-points-number" aria-label="'+score+' punti">'+score.toLocaleString('it-IT')+'</div>'+
+          '<span class="nf-points-caption">punti</span></article>';
+      }).join('')+'</div>';
+  }
+
   document.querySelectorAll('.nf-app').forEach(async app => {
     let data;
     try {
@@ -73,6 +92,10 @@
     app.querySelectorAll('[data-filter="week"] button').forEach(b => b.addEventListener('click', () => { state.week = Number(b.dataset.value); render(); }));
     app.querySelectorAll('.nf-house-filters button').forEach(b => b.addEventListener('click', () => { state.house = b.dataset.house; render(); }));
     app.querySelector('.nf-print')?.addEventListener('click', () => window.print());
+    function renderHousePoints() {
+      const area=app.querySelector('.nf-house-points');
+      if (area) area.innerHTML=renderPoints(data.points||{});
+    }
     function renderTeachers() {
       const area = app.querySelector('.nf-teachers');
       if (!area) return;
@@ -82,9 +105,11 @@
     window.nfUpdatePublic = function(nextData) {
       data = nextData;
       renderTeachers();
+      renderHousePoints();
       render();
     };
     renderTeachers();
+    renderHousePoints();
     render();
   });
 })();
