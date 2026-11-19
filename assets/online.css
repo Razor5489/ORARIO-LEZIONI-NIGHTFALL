@@ -67,10 +67,27 @@
 .nf-points-tassorosso{--points-color:#b38a32}
 .nf-points-corvonero{--points-color:#3e6394}
 .nf-points-serpeverde{--points-color:#32694f}
-.nf-points-card img{display:block;width:92px;height:99px;object-fit:contain;margin:0 auto 9px;mix-blend-mode:multiply}
+.nf-points-emblem{display:block;width:104px;height:104px;margin:0 auto 8px;background-image:url("./stemmi/case-sprite.webp");background-size:400% 100%;background-repeat:no-repeat;mix-blend-mode:multiply}
+.nf-points-emblem-grifondoro{background-position:0% 0%}
+.nf-points-emblem-tassorosso{background-position:33.333% 0%}
+.nf-points-emblem-corvonero{background-position:66.667% 0%}
+.nf-points-emblem-serpeverde{background-position:100% 0%}
 .nf-points-card h4{margin:0 0 3px;font:normal 18px/1.2 Georgia,serif;color:#273944}
 .nf-points-number{font:600 34px/1.05 Georgia,serif;color:var(--points-color);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
 .nf-points-caption{font-size:11px;letter-spacing:.08em;font-weight:700;color:#8c7e69}
 .nf-points-leader{position:absolute;top:7px;right:6px;border-radius:4px;background:#f4e7b7;color:#6c5220;padding:2px 6px;font-size:9px;font-weight:800}
-@media(max-width:700px){.nf-house-points{padding:16px}.nf-points-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.nf-points-card{min-height:190px}.nf-points-card img{width:80px;height:84px}.nf-points-number{font-size:29px}}
+@media(max-width:700px){.nf-house-points{padding:16px}.nf-points-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.nf-points-card{min-height:190px}.nf-points-emblem{width:88px;height:88px}.nf-points-number{font-size:29px}}
 @media(max-width:380px){.nf-points-card h4{font-size:16px}}
+
+/* Pannello punti, con modifica +/- permessa ai docenti */
+.nf-manager .nf-points-editor-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.nf-manager .nf-points-editor-card{border:1px solid #e0d4bb;border-left:4px solid var(--point-editor-color);border-radius:8px;background:#fffdf8;padding:15px;min-width:0}
+.nf-manager .nf-pe-grifondoro{--point-editor-color:#993e4f}
+.nf-manager .nf-pe-tassorosso{--point-editor-color:#ac862f}
+.nf-manager .nf-pe-corvonero{--point-editor-color:#3f6995}
+.nf-manager .nf-pe-serpeverde{--point-editor-color:#33704f}
+.nf-manager .nf-points-editor-card strong{font:normal 20px Georgia,serif;color:#33434b}
+.nf-manager .nf-points-editor-score{font:600 29px Georgia,serif;color:var(--point-editor-color);margin:6px 0 13px}
+.nf-manager .nf-points-editor-card label{display:block;margin-bottom:6px}
+.nf-manager .nf-points-editor-card input[type=number]{display:block;width:100%;max-width:160px;min-height:39px;padding:8px 10px;border:1px solid #d6c6a7;background:#fffef9;border-radius:6px;color:#1d323b;font-size:14px;margin-bottom:11px}
+@media(max-width:620px){.nf-manager .nf-points-editor-grid{grid-template-columns:1fr}}
