@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-label="Stemma Hogwarts Nightfall">
+  <defs>
+    <linearGradient id="night" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#263c4b"/>
+      <stop offset="1" stop-color="#0e202b"/>
+    </linearGradient>
+    <linearGradient id="shield" x1="0" y1="0" x2="0.85" y2="1">
+      <stop stop-color="#712c39"/>
+      <stop offset="1" stop-color="#331e33"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="13" fill="url(#night)"/>
+  <rect x="2.5" y="2.5" width="59" height="59" rx="11" fill="none" stroke="#bda16d" stroke-width="1.4"/>
+  <path d="M32 8 L35.3 13.4 41.5 13.8 37 18.2 38 24.5 32 21.4 26 24.5 27 18.2 22.5 13.8 28.7 13.4Z" fill="#e8ce8e"/>
+  <path d="M15 21.5Q32 16 49 21.5V34Q48 49 32 56Q16 49 15 34Z" fill="url(#shield)" stroke="#edcf87" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M19 25Q32 22 45 25V34Q44 46 32 51Q20 46 19 34Z" fill="none" stroke="#b79154" stroke-width="1.2"/>
+  <path d="M26 28v17M38 28v17M26 36h12" fill="none" stroke="#f8e8b7" stroke-width="4.4" stroke-linecap="square" stroke-linejoin="round"/>
+  <path d="M8 33l3-3 3 3-3 3z" fill="#d6ba74"/>
+  <path d="M50 33l3-3 3 3-3 3z" fill="#d6ba74"/>
+</svg>
