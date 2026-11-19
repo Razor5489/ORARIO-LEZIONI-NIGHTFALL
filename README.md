@@ -23,24 +23,20 @@ Il sito pubblico si trova nel file `index.html` alla radice del repository.
 3. Seleziona **Branch: main** e **Folder: /(root)**, poi clicca **Save**.
 4. GitHub pubblicherà il sito all'indirizzo **https://razor5489.github.io/ORARIO-LEZIONI-NIGHTFALL/**. L'indirizzo funziona solo dopo che GitHub Pages è attivo e la pubblicazione è riuscita.
 
-Le successive modifiche al ramo `main`, incluso `orari.json`, aggiornano automaticamente la pagina.
-Il sito GitHub Pages è statico e **non** si aggiorna quando modifichi i dati nel foglio Google o nel plugin WordPress: è necessario aggiornare i dati inclusi in `index.html`.
-Per gestire le lezioni con un pannello che salva le modifiche, usa il plugin su un hosting WordPress.
+Le successive modifiche al ramo `main`, incluso `orari.json`, aggiornano automaticamente la pagina. Il sito legge dinamicamente i dati da `orari.json`. La modifica del foglio Google o del plugin WordPress non aggiorna automaticamente il sito GitHub Pages: sono due sistemi indipendenti.
 
 ## Gestisci orari direttamente dal sito
 
-Usa il pulsante **⚙ Gestisci orari** visibile nella pagina pubblica:
+Il pulsante **⚙ Gestisci orari** è presente nella pagina pubblica.
 
-1. Inserisci **la stessa password di gestione del Regolamento scolastico**.
-2. Apri **Orario lezioni** per selezionare l'anno, la settimana e il giorno; modifica orari e materie per ogni Casa.
-3. Apri **Corpo docenti** per modificare professori, materie e visibilità dell'elenco.
-4. Premi **Pubblica online** per salvare le modifiche in `orari.json` su GitHub.
+- **Accesso professori:** utilizza una password esclusiva del registro orari, distinta da quella del Regolamento scolastico. Consente di modificare materie e fasce orarie delle settimane del 1° e del 2° anno, ma non di cambiare l'elenco del corpo docenti. Le operazioni massive di copia e svuotamento della settimana non sono presentate ai professori.
+- **Accesso amministratore:** continua a usare la password generale del Regolamento scolastico. Consente di gestire anche il corpo docenti, la loro visibilità e le operazioni massive.
+- **Pubblica online:** salva le modifiche nel file `orari.json` del repository tramite il servizio protetto su Vercel. Gli studenti visualizzano gli aggiornamenti tramite GitHub Pages.
+- **Backup:** permette di esportare il contenuto JSON prima di salvare.
 
-Le modifiche saranno pubblicate tramite GitHub Pages. I dati rimangono modificabili senza accedere a GitHub.
+La password dei professori è una variabile sensibile denominata `ORARI_DOCENTI_PASSWORD`, conservata sul server nel progetto Vercel **nightfall-regolamento-professori**, non pubblicata in GitHub né nella pagina degli studenti. Può essere cambiata dalle impostazioni Vercel, seguita da una nuova distribuzione del progetto. Il servizio utilizza inoltre la variabile privata `GITHUB_TOKEN` con permessi **Contents: Read and write** sul repository `Razor5489/ORARIO-LEZIONI-NIGHTFALL`.
 
-### Sicurezza e configurazione
-
-L'autenticazione e la scrittura su GitHub vengono gestite dal servizio Vercel esistente del Regolamento scolastico (`https://nightfall-regolamento-professori.vercel.app/api/orari`). La password **non è salvata nei file del sito**, e la credenziale per pubblicare su GitHub rimane sul server Vercel. Nessuna credenziale è richiesta agli studenti. Il token GitHub configurato nel progetto Vercel deve avere il permesso di scrittura anche sul repository `Razor5489/ORARIO-LEZIONI-NIGHTFALL`; in caso contrario, la pubblicazione viene rifiutata dal servizio. La password viene mantenuta in memoria soltanto nella sessione di gestione; non viene salvata in localStorage.
+**Nota sulla condivisione:** tutti coloro che ricevono la password dei professori possono cambiare gli orari di tutte le Case e settimane. Per revocare l'accesso a una persona è necessario cambiare la password condivisa. Il sistema non distingue automaticamente chi ha effettuato una modifica.
 
 ## Installazione WordPress
 
