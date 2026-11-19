@@ -17,7 +17,16 @@ Clicca sul pulsante **⚙ Gestisci orari** nella pagina pubblica. Sono disponibi
 - **Password professori**: consente di modificare gli orari, le materie e le fasce orarie di tutte le Case e le settimane; non consente di modificare l'elenco del personale scolastico.
 - **Password amministratore**: conserva l'accesso alla gestione completa degli orari, del corpo docenti e delle operazioni massive.
 
-Dopo le modifiche, clicca **Pubblica online**. Il pannello salva tramite `https://nightfall-regolamento-professori.vercel.app/api/orari`, con controllo della versione (ETag) per evitare sovrascritture accidentali. **Scarica backup JSON** permette di conservare una copia della bozza.
+Dopo le modifiche, clicca **Pubblica online**. Il pannello salva tramite `https://nightfall-regolamento-professori.vercel.app/api/orari` e unisce automaticamente le modifiche degli altri professori.
+
+### Modifiche contemporanee
+
+- Ogni salvataggio contiene solo le caselle realmente modificate rispetto alla bozza iniziale.
+- Se due docenti modificano caselle differenti, entrambe le modifiche vengono mantenute, anche con salvataggi simultanei.
+- Il server verifica la versione del file tramite ETag e riprova automaticamente quando un altro salvataggio arriva nello stesso istante; gli ETag `W/` vengono normalizzati per i file grandi.
+- Se due utenti modificano **la stessa casella**, viene mantenuto l'ultimo valore salvato e il pannello segnala la sovrapposizione.
+- Le modifiche al corpo docenti rimangono riservate all'amministratore.
+- **Scarica backup JSON** consente di conservare una copia della bozza.
 
 Le password e il token di accesso al Blob non sono presenti nel codice pubblico: Vercel li conserva in variabili d'ambiente protette. Non è necessario concedere ai professori accesso a GitHub, Vercel o Google.
 
