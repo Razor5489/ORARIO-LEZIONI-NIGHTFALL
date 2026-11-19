@@ -98,23 +98,23 @@
       data = await response.json();
     } catch (error) {
       const display = app.querySelector('.nf-display');
-    let visibleLogCount=12;
-    function renderCompleted(){
-      const area=app.querySelector('.nf-completed-log');
-      if(area)area.innerHTML=renderDonePublic(data,state,visibleLogCount);
-    }
-    const logArea=app.querySelector('.nf-completed-log');
-    if(logArea)logArea.addEventListener('click',event=>{
-      if(event.target.closest('.nf-log-more')){
-        visibleLogCount+=20;
-        renderCompleted();
-      }
-    });
       if (display) display.textContent = "Non è stato possibile caricare gli orari. Aggiorna la pagina.";
       return;
     }
     const state = { year: Number(app.dataset.year) || 1, week: Number(app.dataset.week) || 1, house: app.dataset.house || 'tutte' };
     const display = app.querySelector('.nf-display');
+    let visibleLogCount = 12;
+    function renderCompleted() {
+      const area = app.querySelector('.nf-completed-log');
+      if (area) area.innerHTML = renderDonePublic(data, state, visibleLogCount);
+    }
+    const logArea = app.querySelector('.nf-completed-log');
+    if (logArea) logArea.addEventListener('click', event => {
+      if (event.target.closest('.nf-log-more')) {
+        visibleLogCount += 20;
+        renderCompleted();
+      }
+    });
 
     function render() {
       const rows = data.schedules?.[`${state.year}-${state.week}`] || [];
