@@ -1,8 +1,8 @@
 (function () {
   'use strict';
-  // The GitHub token stays in memory only; it is never embedded in the public website or stored.
+  // La password resta in memoria soltanto durante la gestione, senza archiviazione locale.
   const REPO = 'Razor5489/ORARIO-LEZIONI-NIGHTFALL';
-  const API = 'https://api.github.com/repos/' + REPO + '/contents/orari.json';
+  const API = 'https://nightfall-regolamento-professori.vercel.app/api/orari';
   const DAYS = ['Lunedì','Martedì','Mercoledì','Giovedì','Venerdì'];
   const HOUSES = {grifondoro:'Grifondoro',tassorosso:'Tassorosso',corvonero:'Corvonero',serpeverde:'Serpeverde'};
   const PERIODS = ['1-1','1-2','2-1','2-2'];
@@ -33,12 +33,11 @@
     <div class="nf-manager-main">
       <section id="nf-manager-login" class="nf-auth">
         <h3>Accesso alla gestione</h3>
-        <p class="nf-help">Puoi modificare direttamente lezioni, fasce orarie e professori e pubblicare le modifiche per tutti gli studenti. L'accesso usa un <strong>token personale GitHub</strong> autorizzato per questo repository: la normale password GitHub non deve essere inserita qui.</p>
-        <label for="nf-admin-token" class="nf-label">Token GitHub per pubblicare</label>
-        <input type="password" id="nf-admin-token" placeholder="github_pat_… o ghp_…" autocomplete="off" spellcheck="false">
-        <div class="nf-flex nf-gap"><button type="button" id="nf-login-btn" class="nf-btn primary">Accedi alla gestione</button>
-          <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener noreferrer">Crea un token su GitHub</a></div>
-        <p class="nf-help">Per creare il token: seleziona il proprietario <strong>Razor5489</strong>, consenti l'accesso al solo repository <strong>ORARIO-LEZIONI-NIGHTFALL</strong> e abilita il permesso <strong>Contents: Read and write</strong>. Copia il token qui. Non sarà salvato nel browser né pubblicato nel repository.</p>
+        <p class="nf-help">Inserisci la <strong>password di gestione</strong>, come nel Regolamento scolastico. Le credenziali vengono verificate dal servizio protetto e non sono pubblicate nel sito.</p>
+        <label for="nf-admin-password" class="nf-label">Password di gestione</label>
+        <input type="password" id="nf-admin-password" placeholder="Inserisci la password" autocomplete="current-password" maxlength="256">
+        <div class="nf-flex nf-gap"><button type="button" id="nf-login-btn" class="nf-btn primary">Accedi alla gestione</button></div>
+        <p class="nf-help">Puoi modificare le settimane e i professori. Con <strong>Pubblica online</strong> le modifiche vengono salvate nel repository GitHub dal servizio protetto.</p>
         <p id="nf-login-status" class="nf-status" role="status" aria-live="polite"></p>
       </section>
       <section id="nf-editor" hidden>
@@ -100,13 +99,12 @@
     return btoa(binary);
   }
   async function github(method='GET', payload) {
-    const response = await fetch(API + (method === 'GET' ? '?ref=main&ts=' + Date.now() : ''), {
+    const response = await fetch(API, {
       method,
       cache:'no-store',
       headers:{
-        'Accept':'application/vnd.github+json',
-        'X-GitHub-Api-Version':'2022-11-28',
-        'Authorization':'Bearer ' + token,
+        'Accept':'application/json',
+        'Authorization':'Bearer ' + encodeBase64(token),
         ...(payload ? {'Content-Type':'application/json'} : {})
       },
       body: payload ? JSON.stringify(payload) : undefined
@@ -114,10 +112,10 @@
     let result;
     try { result = await response.json(); } catch { result = {}; }
     if (!response.ok) {
-      let message = result.message || 'Operazione non riuscita.';
-      if (response.status === 401) message = 'Token non valido o scaduto.';
-      if (response.status === 403) message = 'Accesso negato: verifica il permesso Contents: Read and write e il repository autorizzato.';
-      if (response.status === 409 || response.status === 422) message = 'È stata rilevata una modifica concorrente. Ricarica la gestione prima di pubblicare.';
+      let message = result.error || 'Operazione non riuscita.';
+      if (response.status === 401) message = 'Password di gestione errata.';
+      if (response.status === 503) message = 'Servizio non ancora configurato.';
+      if (response.status === 409) message = 'Gli orari sono stati modificati da un altro amministratore. Ricarica i dati.';
       throw new Error(message);
     }
     return result;
@@ -137,14 +135,14 @@
   }
   async function login() {
     if (busy) return;
-    token = $('nf-admin-token').value.trim();
-    if (!token) { status('Inserisci un token GitHub autorizzato.',true,false,'nf-login-status');return; }
-    $('nf-admin-token').value = '';
+    token = $('nf-admin-password').value;
+    if (!token) { status('Inserisci la password di gestione.',true,false,'nf-login-status');return; }
+    $('nf-admin-password').value = '';
     setBusy(true);
-    status('Verifica autorizzazione GitHub…',false,false,'nf-login-status');
+    status('Verifica della password…',false,false,'nf-login-status');
     try {
       const remote = await github();
-      setEditorState(JSON.parse(decodeBase64(remote.content)),remote.sha);
+      setEditorState(remote.document,remote.sha);
       status('Accesso riuscito. Puoi modificare i dati e pubblicarli.',false,true);
     } catch (error) {
       token = '';
@@ -322,13 +320,8 @@
       const remote = await github();
       if (remote.sha !== sha) throw new Error('Qualcuno ha già modificato gli orari su GitHub. Scarica un backup della bozza ed esci, poi rientra per evitare sovrascritture.');
       draft.updated_at = new Date().toISOString();
-      const result = await github('PUT',{
-        message:'Aggiorna orari e corpo docenti dal pannello Nightfall',
-        branch:'main',
-        sha:sha,
-        content:encodeBase64(JSON.stringify(draft,null,2) + '\n')
-      });
-      sha = result.content?.sha || sha;
+      const result = await github('PUT',{document:draft,sha});
+      sha = result.sha || sha;
       original = clone(draft);
       dirtyState();
       if (typeof window.nfUpdatePublic === 'function') window.nfUpdatePublic(clone(draft));
@@ -354,7 +347,7 @@
     if (changed() && !confirm('Hai modifiche non pubblicate. Uscire e perderle?')) return;
     dialog.close();
     token = ''; sha = ''; draft = null; original = null;
-    $('nf-admin-token').value = '';
+    $('nf-admin-password').value = '';
     $('nf-editor').hidden = true;
     $('nf-manager-login').hidden = false;
     status('',false,false,'nf-login-status');
@@ -363,7 +356,7 @@
   $('nf-close-manager').addEventListener('click', closeManager);
   dialog.addEventListener('cancel',event => {event.preventDefault();closeManager();});
   $('nf-login-btn').addEventListener('click',login);
-  $('nf-admin-token').addEventListener('keydown',event => {if(event.key === 'Enter'){event.preventDefault();login();}});
+  $('nf-admin-password').addEventListener('keydown',event => {if(event.key === 'Enter'){event.preventDefault();login();}});
   $('nf-logout').addEventListener('click',closeManager);
   $('nf-publish').addEventListener('click',publish);
   $('nf-discard').addEventListener('click',discard);
