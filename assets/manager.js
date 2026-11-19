@@ -79,6 +79,8 @@
     for (const id of ['nf-login-btn','nf-publish','nf-discard']) {
       if ($(id)) $(id).disabled = next;
     }
+    const fields = $('nf-editor-content');
+    if (fields) fields.inert = next;
   }
   function valid(source) {
     return source && typeof source === 'object' && source.teachers && typeof source.teachers === 'object'
@@ -116,7 +118,8 @@
       let message = result.error || 'Operazione non riuscita.';
       if (response.status === 401) message = 'Password di gestione errata.';
       if (response.status === 503) message = 'Servizio non ancora configurato.';
-      if (response.status === 409) message = 'Gli orari sono stati modificati da un altro amministratore. Ricarica i dati.';
+      if (response.status === 428) message = 'Questa scheda usa una versione precedente. Esporta la bozza e aggiorna la pagina.';
+      if (response.status === 409 && !result.error) message = 'Impossibile unire le modifiche, riprova.';
       throw new Error(message);
     }
     return result;
@@ -318,21 +321,30 @@
     if (busy) return;
     try {validateBeforePublish();} catch(error) {status(error.message,true);return;}
     if (!changed()) {status('Nessuna modifica da pubblicare.');return;}
-    if (!confirm('Pubblicare le modifiche degli orari e del corpo docenti per tutti gli studenti?')) return;
-    setBusy(true);status('Verifica e salvataggio degli orari nell’archivio protetto…');
+    const label = accessRole === 'admin' ? 'gli orari e il corpo docenti' : 'gli orari delle lezioni';
+    if (!confirm('Salvare e pubblicare ' + label + ' per tutti gli studenti? Le modifiche indipendenti degli altri professori verranno mantenute.')) return;
+    setBusy(true);
+    status('Salvataggio e unione delle modifiche dei professori in corso…');
     try {
-      const remote = await github();
-      if (remote.sha !== sha) throw new Error('Gli orari sono stati modificati nel frattempo. Scarica un backup della bozza ed esci, poi rientra per evitare sovrascritture.');
-      draft.updated_at = new Date().toISOString();
-      const result = await github('PUT',{document:draft,sha});
+      // The backend computes a precise diff against the snapshot used when
+      // editing started; do not reject a stale version here.
+      const result = await github('PUT',{base:clone(original),document:clone(draft),sha});
+      if (!result.ok || !result.document) throw new Error('Il servizio non ha confermato il salvataggio.');
       sha = result.sha || sha;
-      if (result.document) draft = clone(result.document);
-      original = clone(draft);
-      dirtyState();
-      if (typeof window.nfUpdatePublic === 'function') window.nfUpdatePublic(clone(draft));
-      status('Orari salvati correttamente! Le modifiche sono ora disponibili agli studenti.',false,true);
+      draft = clone(result.document);
+      original = clone(result.document);
+      render();
+      if (typeof window.nfUpdatePublic === 'function') window.nfUpdatePublic(clone(result.document));
+      const collisions = Number(result.overwritten || 0);
+      if (collisions > 0) {
+        status('Orari salvati! ' + collisions + ' caselle erano state modificate anche da altri: è stata applicata l’ultima modifica salvata per quelle caselle.',false,true);
+      } else if (result.merged) {
+        status('Orari salvati e uniti correttamente alle modifiche degli altri professori.',false,true);
+      } else {
+        status('Orari salvati correttamente e disponibili agli studenti.',false,true);
+      }
     } catch(error) {
-      status('Pubblicazione non riuscita: ' + (error.message || 'Errore sconosciuto') + '. La bozza è ancora disponibile.',true);
+      status('Salvataggio non riuscito: ' + (error.message || 'Errore sconosciuto') + ' La tua bozza è ancora disponibile.',true);
     } finally {setBusy(false);}
   }
   function backup() {
