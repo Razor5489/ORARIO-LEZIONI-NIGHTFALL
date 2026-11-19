@@ -91,3 +91,47 @@
 .nf-manager .nf-points-editor-card label{display:block;margin-bottom:6px}
 .nf-manager .nf-points-editor-card input[type=number]{display:block;width:100%;max-width:160px;min-height:39px;padding:8px 10px;border:1px solid #d6c6a7;background:#fffef9;border-radius:6px;color:#1d323b;font-size:14px;margin-bottom:11px}
 @media(max-width:620px){.nf-manager .nf-points-editor-grid{grid-template-columns:1fr}}
+
+
+/* Registro lezioni effettivamente svolte, nel sito Orario Lezioni */
+.nf-completed-log{margin:26px 0 29px;padding:23px;border:1px solid #dfd0b7;border-radius:9px;background:linear-gradient(140deg,#fffdf8,#f6efe2);box-shadow:0 5px 20px #362b1b0b}
+.nf-completed-log .nf-section-title{margin-bottom:11px}
+.nf-log-info{font-size:12px;color:#82735e;margin:0 0 18px!important;line-height:1.6}
+.nf-completed-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.nf-completed-item{padding:15px 16px;border:1px solid #e3d7c4;border-left:3px solid #ac8b58;border-radius:7px;background:#fffefa;min-width:0;overflow-wrap:anywhere}
+.nf-completed-item-heading{display:flex;justify-content:space-between;gap:6px;flex-wrap:wrap;align-items:baseline;color:#8a7861;font-size:11px}
+.nf-completed-item-heading time{font-weight:800;color:#6f5a37}
+.nf-completed-item h4{font:normal 20px/1.2 Georgia,serif;color:#243943;margin:10px 0 4px}
+.nf-log-topic{color:#364b53;font-weight:700;font-size:13px;margin:4px 0!important}
+.nf-completed-prof{font-size:12px;color:#82735e;margin:5px 0 10px!important}
+.nf-log-badges{display:flex;gap:5px;flex-wrap:wrap}
+.nf-log-badge{font-size:10px;padding:4px 7px;border-radius:4px;background:#f0eadc;font-weight:800;color:#5d584e}
+.nf-log-badge-grifondoro{background:#f8e7e7;color:#893d49}
+.nf-log-badge-tassorosso{background:#faf1d8;color:#84651d}
+.nf-log-badge-corvonero{background:#e9f0fa;color:#355b86}
+.nf-log-badge-serpeverde{background:#e5f3e9;color:#2e6749}
+.nf-log-notes{border-top:1px solid #efe6d8;padding-top:9px;margin:10px 0 0!important;font-size:12px;line-height:1.6;color:#6e716b;white-space:pre-wrap}
+.nf-log-public-empty{border:1px dashed #d8ccb4;padding:22px 15px;text-align:center;border-radius:6px;color:#817660;background:#fffefa;font-size:13px}
+.nf-log-more{display:block;margin:15px auto 0;padding:9px 18px;border:1px solid #c9ae7a;border-radius:5px;background:#fff9e9;color:#5b4a2b;font-weight:750;font-size:12px}
+.nf-log-more:hover{background:#f1e5ca}
+/* Campi del registro nel pannello di gestione */
+.nf-manager .nf-log-form{display:grid;gap:14px;margin:16px 0 24px}
+.nf-manager .nf-log-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.nf-manager .nf-log-form label{display:flex;flex-direction:column;gap:5px;align-items:stretch;font-size:12px;font-weight:800;color:#556465}
+.nf-manager .nf-log-form input[type=date],.nf-manager .nf-log-form input[type=text],.nf-manager .nf-log-form select,.nf-manager .nf-log-form textarea{display:block;width:100%;min-height:40px;padding:9px 10px;border:1px solid #d6c6a7;border-radius:6px;background:#fffefa;color:#263d46;font-size:13px}
+.nf-manager .nf-log-form textarea{min-height:76px;resize:vertical}
+.nf-manager .nf-log-house-field{margin:0;padding:12px 13px;border:1px solid #dcd0ba;border-radius:7px;background:#fffbf3}
+.nf-manager .nf-log-house-field legend{font-size:12px;font-weight:800;color:#5d605d;padding:0 7px}
+.nf-manager .nf-log-house-choice{display:flex;gap:8px 15px;flex-wrap:wrap}
+.nf-manager .nf-log-house-choice .nf-log-house-option{display:flex;flex-direction:row;align-items:center;gap:6px;cursor:pointer}
+.nf-manager .nf-log-house-option input{width:16px;height:16px;accent-color:#76562b}
+.nf-manager .nf-log-actions{margin:3px 0 0}
+.nf-manager .nf-log-history-heading{border-top:1px solid #e3d6bd;padding-top:19px!important;margin-top:25px!important}
+.nf-manager .nf-log-history-heading span{font-size:14px;color:#8b826f}
+.nf-manager .nf-log-editor-list{list-style:none;padding:0;margin:12px 0;display:grid;gap:8px}
+.nf-manager .nf-log-editor-item{display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid #e9deca;padding:11px 12px;background:#fffefa;border-radius:7px;font-size:12px;color:#5c645f}
+.nf-manager .nf-log-editor-item>div{min-width:0;overflow-wrap:anywhere}
+.nf-manager .nf-log-editor-details{display:block;margin-top:5px;color:#2b454d}
+.nf-manager .nf-log-editor-item small{display:block;margin-top:5px;font-size:11px;color:#8c7b65}
+.nf-manager .nf-log-empty{padding:14px;border:1px dashed #d5c9b2;border-radius:5px;color:#8c7b65;font-size:13px}
+@media(max-width:680px){.nf-completed-log{padding:14px}.nf-completed-grid{grid-template-columns:1fr}.nf-manager .nf-log-fields{grid-template-columns:1fr}.nf-manager .nf-log-editor-item{align-items:flex-start}.nf-manager .nf-log-editor-item button{white-space:nowrap}}
