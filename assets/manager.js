@@ -38,7 +38,7 @@
         <label for="nf-admin-password" class="nf-label">Password docenti o amministratore</label>
         <input type="password" id="nf-admin-password" placeholder="Inserisci la password" autocomplete="current-password" maxlength="256">
         <div class="nf-flex nf-gap"><button type="button" id="nf-login-btn" class="nf-btn primary">Accedi alla gestione</button></div>
-        <p class="nf-help">I professori possono aggiornare materie e fasce orarie, senza accedere alla gestione del corpo docenti. Premi <strong>Pubblica online</strong> per rendere le modifiche visibili agli studenti.</p>
+        <p class="nf-help">I professori possono aggiornare materie e fasce orarie, senza accedere alla gestione del corpo docenti. Premi <strong>Pubblica online</strong> per salvare nel registro protetto e aggiornare gli orari visibili agli studenti.</p>
         <p id="nf-login-status" class="nf-status" role="status" aria-live="polite"></p>
       </section>
       <section id="nf-editor" hidden>
@@ -55,7 +55,7 @@
         <div class="nf-footerbar">
           <div><button type="button" class="nf-btn primary" id="nf-publish">Pubblica online</button>
           <button type="button" class="nf-btn" id="nf-discard">Scarta la bozza</button></div>
-          <span class="nf-note">Le modifiche diventeranno pubbliche dopo l'aggiornamento di GitHub Pages.</span>
+          <span class="nf-note">Le modifiche salvate saranno visibili agli studenti sul sito GitHub Pages.</span>
         </div>
         <p id="nf-editor-status" class="nf-status" role="status" aria-live="polite"></p>
       </section>
@@ -330,7 +330,7 @@
       original = clone(draft);
       dirtyState();
       if (typeof window.nfUpdatePublic === 'function') window.nfUpdatePublic(clone(draft));
-      status('Pubblicazione riuscita! Le modifiche sono state inviate a GitHub e appariranno a tutti dopo l’aggiornamento di Pages.',false,true);
+      status('Orari salvati correttamente! Le modifiche sono ora disponibili agli studenti.',false,true);
     } catch(error) {
       status('Pubblicazione non riuscita: ' + (error.message || 'Errore sconosciuto') + '. La bozza è ancora disponibile.',true);
     } finally {setBusy(false);}
