@@ -56,7 +56,7 @@
         const leader=!tied && score===best;
         return '<article class="nf-points-card nf-points-'+house+'" aria-label="'+esc(name)+': '+score+' punti">' +
           (leader?'<span class="nf-points-leader">✦ In testa</span>':'')+
-          '<img src="./assets/stemmi/'+house+'.webp" width="120" height="120" loading="lazy" alt="Stemma di '+esc(name)+'">' +
+          '<span class="nf-points-emblem nf-points-emblem-'+house+'" role="img" aria-label="Stemma di '+esc(name)+'"></span>' +
           '<h4>'+esc(name)+'</h4>'+
           '<div class="nf-points-number" aria-label="'+score+' punti">'+score.toLocaleString('it-IT')+'</div>'+
           '<span class="nf-points-caption">punti</span></article>';
