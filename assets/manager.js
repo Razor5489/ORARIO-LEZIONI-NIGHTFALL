@@ -50,6 +50,7 @@
         <nav class="nf-switcher" id="nf-editor-nav" aria-label="Sezione da modificare">
           <button type="button" data-page="orari" aria-pressed="true">Orario lezioni</button>
           <button type="button" data-page="docenti" aria-pressed="false">Corpo docenti</button>
+          <button type="button" data-page="punti" aria-pressed="false">Punti Casa</button>
         </nav>
         <div id="nf-editor-content"></div>
         <div class="nf-footerbar">
@@ -135,6 +136,8 @@
     period = '1-1';
     day = DAYS[0];
     page = 'orari';
+    if(!draft.points)draft.points={grifondoro:0,tassorosso:0,corvonero:0,serpeverde:0};
+    if(!original.points)original.points=clone(draft.points);
     $('nf-manager-login').hidden = true;
     $('nf-editor').hidden = false;
     status('');
@@ -217,11 +220,52 @@
       <button type="button" class="nf-btn" id="nf-add-teacher">+ Aggiungi materia</button>
     </section>`;
   }
+  function renderPointsEditor() {
+    const names = Object.entries(HOUSES);
+    const cards = names.map(([house, name]) => {
+      const n = Number(draft.points?.[house] ?? 0);
+      return `<div class="nf-points-editor-card nf-pe-${house}">
+        <strong>${escapeHtml(name)}</strong>
+        <div class="nf-points-editor-score" data-score-for="${house}">${n.toLocaleString('it-IT')} punti</div>
+        <label for="nf-points-amount-${house}">Punti da assegnare o sottrarre</label>
+        <input id="nf-points-amount-${house}" type="number" min="1" max="10000" step="1" value="5" data-amount-for="${house}">
+        <div class="nf-flex">
+          <button type="button" class="nf-btn primary" data-points-house="${house}" data-points-action="add">+ Assegna</button>
+          <button type="button" class="nf-btn" data-points-house="${house}" data-points-action="subtract">− Sottrai</button>
+        </div>
+      </div>`;
+    }).join('');
+    return `<section class="nf-section">
+      <h3>Coppa delle Case — Punti Casa</h3>
+      <p class="nf-help">Assegna o sottrai punti a ciascuna Casa. Puoi registrare più variazioni prima di pubblicare. Quando due professori assegnano punti contemporaneamente, le variazioni vengono sommate senza cancellarsi.</p>
+      <div class="nf-points-editor-grid">${cards}</div>
+      <p class="nf-help">I punteggi visualizzati comprendono le modifiche ancora in bozza. Clicca <strong>Pubblica online</strong> per renderli visibili agli studenti. Non vengono modificati gli orari delle lezioni.</p>
+    </section>`;
+  }
+  function adjustPoints(house, sign) {
+    if(!Object.prototype.hasOwnProperty.call(HOUSES,house))return;
+    const field=$('nf-editor-content').querySelector('[data-amount-for="'+house+'"]');
+    if(!field)return;
+    const amount=Number(field.value);
+    if(!Number.isSafeInteger(amount)||amount<1||amount>10000){
+      status('Inserisci un numero intero di punti da 1 a 10.000.',true);return;
+    }
+    const old=Number(draft.points?.[house]??0);
+    const next=old+sign*amount;
+    if(!Number.isSafeInteger(next)||Math.abs(next)>1000000){
+      status('Il punteggio risultante deve essere compreso tra -1.000.000 e 1.000.000.',true);return;
+    }
+    draft.points[house]=next;
+    const score=$('nf-editor-content').querySelector('[data-score-for="'+house+'"]');
+    if(score)score.textContent=next.toLocaleString('it-IT')+' punti';
+    dirtyState();
+    status('Variazione aggiunta alla bozza: '+HOUSES[house]+(sign>0?' +':' −')+amount+' punti.');
+  }
   function render() {
     $('nf-editor-nav').querySelectorAll('button').forEach(button =>
       button.setAttribute('aria-pressed',String(button.dataset.page === page)));
     if (accessRole !== 'admin' && page === 'docenti') page = 'orari';
-    $('nf-editor-content').innerHTML = page === 'orari' ? renderSchedule() : renderTeachers();
+    $('nf-editor-content').innerHTML = page === 'orari' ? renderSchedule() : page === 'punti' ? renderPointsEditor() : renderTeachers();
     dirtyState();
   }
   function teacherRename(oldName,newName) {
@@ -232,6 +276,10 @@
       render(); return;
     }
     const rewritten = {};
+    for (const house of Object.keys(HOUSES)) {
+      if (!Number.isSafeInteger(draft.points?.[house]) || Math.abs(draft.points[house])>1000000)
+        throw new Error('Il punteggio di '+HOUSES[house]+' non è valido.');
+    }
     for (const [name,people] of Object.entries(draft.teachers)) {
       rewritten[name === oldName ? next : name] = people;
     }
@@ -321,7 +369,7 @@
     if (busy) return;
     try {validateBeforePublish();} catch(error) {status(error.message,true);return;}
     if (!changed()) {status('Nessuna modifica da pubblicare.');return;}
-    const label = accessRole === 'admin' ? 'gli orari e il corpo docenti' : 'gli orari delle lezioni';
+    const label = accessRole === 'admin' ? 'le modifiche del registro scolastico' : 'gli orari e i Punti Casa';
     if (!confirm('Salvare e pubblicare ' + label + ' per tutti gli studenti? Le modifiche indipendenti degli altri professori verranno mantenute.')) return;
     setBusy(true);
     status('Salvataggio e unione delle modifiche dei professori in corso…');
@@ -392,5 +440,9 @@
     if (event.target.closest('#nf-add-teacher') && accessRole === 'admin') addTeacher();
     const remove = event.target.closest('[data-remove-teacher]');
     if (remove && accessRole === 'admin') removeTeacher(remove.dataset.removeTeacher);
+    const pointButton=event.target.closest('[data-points-house][data-points-action]');
+    if(pointButton){
+      adjustPoints(pointButton.dataset.pointsHouse,pointButton.dataset.pointsAction==='add'?1:-1);
+    }
   });
 })();
