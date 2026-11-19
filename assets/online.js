@@ -47,7 +47,7 @@
   document.querySelectorAll('.nf-app').forEach(async app => {
     let data;
     try {
-      const response = await fetch('./orari.json?ts=' + Date.now(), {cache: 'no-store'});
+      const response = await fetch('https://nightfall-regolamento-professori.vercel.app/api/orari-public?ts=' + Date.now(), {cache: 'no-store'});
       if (!response.ok) throw new Error('Dati non disponibili');
       data = await response.json();
     } catch (error) {
