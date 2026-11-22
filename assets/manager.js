@@ -266,69 +266,69 @@
     status('Variazione aggiunta alla bozza: '+HOUSES[house]+(sign>0?' +':' −')+amount+' punti.');
   }
   function renderDoneEditor() {
-    const periodOptions=PERIODS.map(p=>`<option value="${p}" ${p===period?'selected':''}>${periodLabel(p)}</option>`).join('');
-
-    const subjects=subjectsList().filter(s=>s!=='Tempo libero').map(s=>
-      `<option value="${escapeHtml(s)}"></option>`).join('');
-    const entries=Object.entries(draft.lessons_done||{}).sort((a,b)=>
-      String(b[1].recorded_at||'').localeCompare(String(a[1].recorded_at||'')));
-    const rows=entries.slice(0,50).map(([id,r])=>{
+    const yearOptions=[1,2].map(year=>
+      `<option value="${year}" ${Number(period.split('-')[0])===year?'selected':''}>${year}° anno</option>`).join('');
+    const entries=Object.entries(draft.lessons_done||{})
+      .filter(([id,record])=>record && /^\d-[12]$/.test(String(record.period||'')))
+      .sort((a,b)=>String(b[1].recorded_at||'').localeCompare(String(a[1].recorded_at||'')));
+    const rows=entries.slice(0,50).map(([id,record])=>{
+      const title=String(record.topic||'').replace(/^incantesimi?\s*/i,'').trim() ||
+        String(record.subject||'').trim();
+      const year=String(record.period||'').split('-')[0];
       return `<li class="nf-log-editor-item"><div>
         <span class="nf-log-done-check" aria-hidden="true">✓</span>
-        <strong>${escapeHtml(r.subject)}</strong>
-        <span class="nf-log-editor-details">${escapeHtml(periodLabel(r.period))}</span>
-        ${r.topic?`<small>${escapeHtml(r.topic)}</small>`:''}
+        <strong>${escapeHtml(title)}</strong>
+        <span class="nf-log-editor-details">${escapeHtml(year)}° anno</span>
       </div>${accessRole==='admin'?`<button type="button" class="nf-btn danger" data-delete-log="${escapeHtml(id)}">Rimuovi</button>`:''}</li>`;
     }).join('');
     return `<section class="nf-section nf-log-section">
-      <h3>✓ Promemoria delle lezioni svolte</h3>
-      <p class="nf-help">Indica soltanto anno, settimana e materia, con un argomento facoltativo. Gli studenti vedranno tutte le lezioni segnate, senza suddivisione per Casa, dopo la pubblicazione.</p>
+      <h3>✓ Incantesimi svolti</h3>
+      <p class="nf-help">Segna gli incantesimi già svolti scegliendo solo l'anno e il nome. Gli studenti li vedranno divisi per 1° e 2° anno, senza settimane, date o Case.</p>
       <form id="nf-log-form" class="nf-log-form">
         <div class="nf-log-fields">
-          <label>Anno e settimana
-            <select id="nf-log-period">${periodOptions}</select>
+          <label>Anno scolastico
+            <select id="nf-log-year">${yearOptions}</select>
           </label>
-          <label>Materia svolta
-            <input id="nf-log-subject" type="text" list="nf-log-subjects" maxlength="120" required placeholder="Es. Incantesimi">
-            <datalist id="nf-log-subjects">${subjects}</datalist>
+          <label>Incantesimo svolto
+            <input id="nf-log-spell" type="text" maxlength="130" required placeholder="Es. Lumos">
           </label>
         </div>
-        <label>Argomento (facoltativo)
-          <input id="nf-log-topic" type="text" maxlength="130" placeholder="Es. Incantesimo Lumos">
-        </label>
         <div class="nf-flex nf-log-actions">
-          <button class="nf-btn primary" type="submit">✓ Segna come svolta</button>
+          <button class="nf-btn primary" type="submit">✓ Segna come svolto</button>
         </div>
       </form>
-      <h3 class="nf-log-history-heading">Lezioni già segnate <span>(${entries.length})</span></h3>
-      <p class="nf-help">Premi <strong>Pubblica online</strong> per salvare. ${accessRole==='admin'?'Puoi rimuovere una voce inserita per errore.':'Per correggere una voce già pubblicata, rivolgiti alla Presidenza.'}</p>
-      ${rows?`<ul class="nf-log-editor-list">${rows}</ul>${entries.length>50?'<p class="nf-note">Sono mostrate le 50 voci più recenti.</p>':''}`:'<p class="nf-log-empty">Non è stata ancora segnata alcuna lezione svolta.</p>'}
+      <h3 class="nf-log-history-heading">Registrazioni esistenti <span>(${entries.length})</span></h3>
+      <p class="nf-help">Le registrazioni precedenti restano conservate. Premi <strong>Pubblica online</strong> per salvare; le voci già pubblicate possono essere rimosse solo dalla Presidenza.</p>
+      ${rows?`<ul class="nf-log-editor-list">${rows}</ul>`:'<p class="nf-log-empty">Nessun incantesimo ancora registrato.</p>'}
     </section>`;
   }
   function addDoneLesson() {
     const form=$('nf-log-form');
-    if(!form || !draft)return;
-    const p=form.querySelector('#nf-log-period').value;
-    const subject=form.querySelector('#nf-log-subject').value.trim();
-    const topic=form.querySelector('#nf-log-topic').value.trim();
-    if(!PERIODS.includes(p)){status('Seleziona anno e settimana.',true);return;}
-    if(!subject||/^(tempo libero|da programmare)$/i.test(subject)){
-      status('Indica una materia effettivamente svolta.',true);return;
+    if(!form||!draft)return;
+    const year=Number(form.querySelector('#nf-log-year')?.value);
+    const spell=String(form.querySelector('#nf-log-spell')?.value||'').trim();
+    if(![1,2].includes(year)){status('Seleziona l’anno scolastico.',true);return;}
+    if(!spell||/^(tempo libero|da programmare)$/i.test(spell)){
+      status('Indica il nome dell’incantesimo svolto.',true);return;
     }
-    const alreadyExists=Object.values(draft.lessons_done||{}).some(entry=>
-      entry.period===p &&
-      String(entry.subject||'').trim().toLocaleLowerCase('it-IT')===subject.toLocaleLowerCase('it-IT') &&
-      String(entry.topic||'').trim().toLocaleLowerCase('it-IT')===topic.toLocaleLowerCase('it-IT')
-    );
-    if(alreadyExists){status('Questa lezione è già presente nel promemoria per l’anno e la settimana indicati.',true);return;}
+    const duplicate=Object.values(draft.lessons_done||{}).some(entry=>
+      entry && String(entry.period||'').startsWith(year+'-') &&
+      String(entry.topic||'').replace(/^incantesimi?\s*/i,'').trim().toLocaleLowerCase('it-IT')===
+        spell.toLocaleLowerCase('it-IT'));
+    if(duplicate){status('Questo incantesimo è già registrato per l’anno selezionato.',true);return;}
     if(Object.keys(draft.lessons_done||{}).length>=600){
-      status('Il promemoria ha raggiunto il limite di registrazioni. Contatta la Presidenza.',true);return;
+      status('Il registro ha raggiunto il limite. Contatta la Presidenza.',true);return;
     }
     const id=crypto.randomUUID();
-    draft.lessons_done[id]={period:p,subject,topic,professor:'',notes:'',recorded_at:new Date().toISOString()};
-    period=p;
+    // Preserve compatibility with the existing archive and merge mechanism:
+    // weeks remain an internal storage field, never displayed or chosen.
+    draft.lessons_done[id]={
+      period:year+'-1',subject:'Incantesimi',topic:spell,
+      professor:'',notes:'',recorded_at:new Date().toISOString()
+    };
+    period=year+'-1';
     render();
-    status('Lezione aggiunta al promemoria. Premi Pubblica online per salvarla.',false,true);
+    status('Incantesimo aggiunto alla bozza. Premi Pubblica online per salvarlo.',false,true);
   }
   function removeDoneLesson(id){
     if(accessRole!=='admin'||!Object.prototype.hasOwnProperty.call(draft.lessons_done||{},id))return;
@@ -384,7 +384,7 @@
   }
   function onChange(event) {
     const element = event.target;
-    if (element.id === 'nf-log-period'){period=element.value;return;}
+
     if (element.id === 'nf-edit-period') {period = element.value; render();return;}
     if (element.id === 'nf-edit-day') {day = element.value; render();return;}
     if (element.id === 'nf-show-teachers') { if (accessRole !== 'admin') return; draft.show_teachers = element.checked;dirtyState();return;}
