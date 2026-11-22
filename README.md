@@ -40,13 +40,20 @@ Le variazioni vengono applicate come incrementi/decrementi cumulativi. Se due pr
 
 I punteggi iniziali sono `0` per ogni Casa; non viene modificato alcun orario già inserito.
 
-## Registro delle lezioni svolte
+## Promemoria delle lezioni svolte
 
-Nella **stessa pagina degli orari** è presente una sezione **Registro delle lezioni svolte**, consultabile dagli studenti. I filtri esistenti per anno, settimana e Casa si applicano anche al registro.
+Nella **stessa pagina degli orari** è disponibile la sezione **Lezioni svolte**, una semplice lista con spunta delle materie già completate. Gli studenti possono filtrare il promemoria per anno, settimana e Casa.
 
-Per registrare una lezione, i professori entrano in **Gestisci orari → Lezioni svolte** con la password già in uso. Inseriscono la data effettiva, l'anno e la settimana, il giorno e la fascia oraria, una o più Case coinvolte, la materia, il nome del professore e, facoltativamente, l'argomento e un breve resoconto. **Segna come svolta** aggiunge la registrazione alla bozza; **Pubblica online** la rende visibile agli studenti.
+I professori aprono **Gestisci orari → Lezioni svolte** con la password docenti e indicano soltanto:
 
-Ogni lezione ha un identificativo indipendente: più professori possono registrare lezioni contemporaneamente senza perdere i dati altrui. I docenti possono aggiungere registrazioni; la **Presidenza** può anche rimuovere quelle errate dal pannello. I precedenti orari, la classifica Punti Casa e il corpo docenti rimangono invariati.
+- Anno e settimana
+- Materia svolta
+- Una o più Case interessate
+- Argomento, se necessario (facoltativo)
+
+Non sono richiesti né mostrati **data, ora o professore**. Dopo **Segna come svolta**, premere **Pubblica online** per aggiornare il sito.
+
+Le vecchie registrazioni rimangono disponibili ma vengono mostrate con la stessa grafica semplificata. Le modifiche di professori diversi continuano a unirsi automaticamente; la rimozione di voci già pubblicate è riservata alla Presidenza.
 
 ## Amministrazione
 
