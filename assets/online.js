@@ -45,7 +45,17 @@
   }
 
   const HOUSE_POINTS_ORDER=['grifondoro','tassorosso','corvonero','serpeverde'];
-  function renderPoints(points) {
+  function formatPointsUpdate(isoValue) {
+    if(typeof isoValue!=='string' || !/^20\d{2}-\d{2}-\d{2}T/.test(isoValue))return '';
+    const date=new Date(isoValue);
+    if(!Number.isFinite(date.getTime()))return '';
+    return new Intl.DateTimeFormat('it-IT',{
+      timeZone:'Europe/Rome', day:'2-digit', month:'2-digit',year:'numeric',
+      hour:'2-digit',minute:'2-digit',hourCycle:'h23'
+    }).format(date);
+  }
+
+  function renderPoints(points,pointsUpdatedAt) {
     const values=HOUSE_POINTS_ORDER.map(h=>Number.isSafeInteger(points?.[h]) ? points[h] : 0);
     const best=Math.max(...values);
     const tied=values.filter(n=>n===best).length>1;
@@ -60,7 +70,13 @@
           '<h4>'+esc(name)+'</h4>'+
           '<div class="nf-points-number" aria-label="'+score+' punti">'+score.toLocaleString('it-IT')+'</div>'+
           '<span class="nf-points-caption">punti</span></article>';
-      }).join('')+'</div>';
+      }).join('')+'</div>' +
+      '<p class="nf-points-updated" aria-label="Ultimo aggiornamento Punti Casa">' +
+        '<span class="nf-points-updated-icon" aria-hidden="true">◷</span> ' +
+        (formatPointsUpdate(pointsUpdatedAt)
+          ? 'Ultimo aggiornamento: <time datetime="'+esc(pointsUpdatedAt)+'">'+esc(formatPointsUpdate(pointsUpdatedAt))+'</time>'
+          : 'Ultimo aggiornamento: non ancora registrato') +
+      '</p>';
   }
 
   function spellNamesFromLesson(entry) {
@@ -146,7 +162,7 @@
     app.querySelector('.nf-print')?.addEventListener('click', () => window.print());
     function renderHousePoints() {
       const area=app.querySelector('.nf-house-points');
-      if (area) area.innerHTML=renderPoints(data.points||{});
+      if (area) area.innerHTML=renderPoints(data.points||{},data.points_updated_at);
     }
     function renderTeachers() {
       const area = app.querySelector('.nf-teachers');
