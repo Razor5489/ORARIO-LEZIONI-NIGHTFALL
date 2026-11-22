@@ -265,108 +265,86 @@
     dirtyState();
     status('Variazione aggiunta alla bozza: '+HOUSES[house]+(sign>0?' +':' −')+amount+' punti.');
   }
-  function nfLogSlotsHtml(p,d){
-    const rows=(draft.schedules?.[p]||[]).filter(row=>row.day===d);
-    return rows.map((row,i)=>`<option value="${i}">${i+1}ª lezione · ${escapeHtml(row.start)}–${escapeHtml(row.end)}</option>`).join('');
-  }
-
-  function renderDoneEditor(){
-    const opts=PERIODS.map(p=>`<option value="${p}" ${p===period?'selected':''}>${periodLabel(p)}</option>`).join('');
-    const days=DAYS.map(d=>`<option value="${escapeHtml(d)}" ${d===day?'selected':''}>${escapeHtml(d)}</option>`).join('');
-    const houses=Object.entries(HOUSES).map(([h,name])=>`<label class="nf-log-house-option"><input type="checkbox" name="nf-log-house" value="${h}"> ${name}</label>`).join('');
-    const entries=Object.entries(draft.lessons_done||{}).sort((a,b)=>(b[1].date+' '+b[1].recorded_at).localeCompare(a[1].date+' '+a[1].recorded_at));
-    const rows=entries.slice(0,40).map(([id,r])=>{
-      const housenames=(r.houses||[]).map(h=>HOUSES[h]||h).join(', ');
-      const summary=`${r.topic?'<strong>'+escapeHtml(r.topic)+'</strong> · ':''}${escapeHtml(r.subject)} · ${escapeHtml(r.professor)}`;
-      return `<li class="nf-log-editor-item"><div><strong>${escapeHtml(r.date)}</strong> · ${escapeHtml(periodLabel(r.period))} · ${escapeHtml(r.day)} · ${Number(r.slot)+1}ª lezione
-        <span class="nf-log-editor-details">${summary}</span>
-        <small>${escapeHtml(housenames)}${r.notes?' · '+escapeHtml(r.notes):''}</small></div>
-        ${accessRole==='admin'?`<button type="button" class="nf-btn danger" data-delete-log="${escapeHtml(id)}">Rimuovi</button>`:''}</li>`;
+  function renderDoneEditor() {
+    const periodOptions=PERIODS.map(p=>`<option value="${p}" ${p===period?'selected':''}>${periodLabel(p)}</option>`).join('');
+    const houseOptions=Object.entries(HOUSES).map(([h,name])=>
+      `<label class="nf-log-house-option"><input type="checkbox" name="nf-log-house" value="${h}"> ${escapeHtml(name)}</label>`).join('');
+    const subjects=subjectsList().filter(s=>s!=='Tempo libero').map(s=>
+      `<option value="${escapeHtml(s)}"></option>`).join('');
+    const entries=Object.entries(draft.lessons_done||{}).sort((a,b)=>
+      String(b[1].recorded_at||'').localeCompare(String(a[1].recorded_at||'')));
+    const rows=entries.slice(0,50).map(([id,r])=>{
+      const houses=(r.houses||[]).map(h=>HOUSES[h]||h).join(', ');
+      return `<li class="nf-log-editor-item"><div>
+        <span class="nf-log-done-check" aria-hidden="true">✓</span>
+        <strong>${escapeHtml(r.subject)}</strong>
+        <span class="nf-log-editor-details">${escapeHtml(periodLabel(r.period))} · ${escapeHtml(houses)}</span>
+        ${r.topic?`<small>${escapeHtml(r.topic)}</small>`:''}
+      </div>${accessRole==='admin'?`<button type="button" class="nf-btn danger" data-delete-log="${escapeHtml(id)}">Rimuovi</button>`:''}</li>`;
     }).join('');
-    const subjects=subjectsList().filter(x=>x!=='Tempo libero').map(x=>`<option value="${escapeHtml(x)}"></option>`).join('');
-    return `<section class="nf-section nf-log-section"><h3>Registro delle lezioni svolte</h3>
-      <p class="nf-help">Registra le lezioni effettivamente tenute. Puoi scegliere più Case se hanno seguito la stessa lezione. Gli studenti vedranno la registrazione dopo <strong>Pubblica online</strong>.</p>
+    return `<section class="nf-section nf-log-section">
+      <h3>✓ Promemoria delle lezioni svolte</h3>
+      <p class="nf-help">Segna semplicemente quali lezioni sono già state fatte. Non occorre indicare data, orario o professore. Il promemoria sarà visibile agli studenti dopo la pubblicazione.</p>
       <form id="nf-log-form" class="nf-log-form">
         <div class="nf-log-fields">
-          <label>Data effettiva della lezione <input id="nf-log-date" type="date" required value="${new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,10)}"></label>
-          <label>Anno e settimana <select id="nf-log-period">${opts}</select></label>
-          <label>Giorno dell'orario <select id="nf-log-day">${days}</select></label>
-          <label>Fascia oraria <select id="nf-log-slot">${nfLogSlotsHtml(period,day)}</select></label>
+          <label>Anno e settimana
+            <select id="nf-log-period">${periodOptions}</select>
+          </label>
+          <label>Materia svolta
+            <input id="nf-log-subject" type="text" list="nf-log-subjects" maxlength="120" required placeholder="Es. Incantesimi">
+            <datalist id="nf-log-subjects">${subjects}</datalist>
+          </label>
         </div>
-        <fieldset class="nf-log-house-field"><legend>Case coinvolte (selezionane almeno una)</legend><div class="nf-log-house-choice">${houses}</div></fieldset>
-        <div class="nf-log-fields">
-          <label>Materia svolta <input id="nf-log-subject" type="text" list="nf-log-subjects" maxlength="120" required placeholder="Es. Incantesimi"><datalist id="nf-log-subjects">${subjects}</datalist></label>
-          <label>Nome del professore <input id="nf-log-teacher" type="text" maxlength="100" required value="${escapeHtml(lastLogTeacher)}" placeholder="Professore che ha tenuto la lezione"></label>
-          <label>Argomento (facoltativo) <input id="nf-log-topic" type="text" maxlength="130" placeholder="Es. Incantesimo Lumos"></label>
+        <fieldset class="nf-log-house-field">
+          <legend>Per quali Case è stata svolta?</legend>
+          <div class="nf-log-house-choice">${houseOptions}</div>
+        </fieldset>
+        <label>Argomento (facoltativo)
+          <input id="nf-log-topic" type="text" maxlength="130" placeholder="Es. Incantesimo Lumos">
+        </label>
+        <div class="nf-flex nf-log-actions">
+          <button class="nf-btn primary" type="submit">✓ Segna come svolta</button>
         </div>
-        <label>Breve resoconto (facoltativo) <textarea id="nf-log-notes" rows="2" maxlength="400" placeholder="Cosa è stato spiegato durante la lezione"></textarea></label>
-        <div class="nf-flex nf-log-actions"><button class="nf-btn" type="button" id="nf-log-autofill">Usa la materia dell'orario</button>
-          <button class="nf-btn primary" type="submit">✓ Segna come svolta</button></div>
       </form>
-      <h3 class="nf-log-history-heading">Lezioni registrate <span>(${entries.length})</span></h3>
-      <p class="nf-help">Le nuove registrazioni rimangono in bozza fino alla pubblicazione.${accessRole==='admin'?' La Presidenza può rimuovere le registrazioni errate.':' Le eventuali correzioni o eliminazioni possono essere effettuate dalla Presidenza.'}</p>
-      ${rows?`<ul class="nf-log-editor-list">${rows}</ul>${entries.length>40?'<p class="nf-note">Sono visualizzate le 40 registrazioni più recenti.</p>':''}`:'<p class="nf-log-empty">Non risultano ancora lezioni registrate.</p>'}
+      <h3 class="nf-log-history-heading">Lezioni già segnate <span>(${entries.length})</span></h3>
+      <p class="nf-help">Premi <strong>Pubblica online</strong> per salvare. ${accessRole==='admin'?'Puoi rimuovere una voce inserita per errore.':'Per correggere una voce già pubblicata, rivolgiti alla Presidenza.'}</p>
+      ${rows?`<ul class="nf-log-editor-list">${rows}</ul>${entries.length>50?'<p class="nf-note">Sono mostrate le 50 voci più recenti.</p>':''}`:'<p class="nf-log-empty">Non è stata ancora segnata alcuna lezione svolta.</p>'}
     </section>`;
   }
-
-  function refreshLogSlots(){
+  function addDoneLesson() {
     const form=$('nf-log-form');
-    if(!form)return;
+    if(!form || !draft)return;
     const p=form.querySelector('#nf-log-period').value;
-    const d=form.querySelector('#nf-log-day').value;
-    period=p;day=d;
-    const select=form.querySelector('#nf-log-slot');
-    const previous=select.value;
-    select.innerHTML=nfLogSlotsHtml(p,d);
-    if([...select.options].some(o=>o.value===previous))select.value=previous;
-  }
-
-  function prefillLogSubject(){
-    const form=$('nf-log-form');if(!form)return;
-    const homes=[...form.querySelectorAll('input[name="nf-log-house"]:checked')].map(e=>e.value);
-    if(!homes.length){status('Seleziona prima almeno una Casa.',true);return;}
-    const p=form.querySelector('#nf-log-period').value;
-    const d=form.querySelector('#nf-log-day').value;
-    const slot=Number(form.querySelector('#nf-log-slot').value);
-    const row=(draft.schedules[p]||[]).filter(r=>r.day===d)[slot];
-    const subjects=[...new Set(homes.map(h=>normal(row?.subjects?.[h])).filter(x=>x!=='Tempo libero'))];
-    if(subjects.length!==1){status(subjects.length?'Le Case selezionate hanno materie diverse: inserisci la materia manualmente.':'Nessuna materia prevista nell’orario: inseriscila manualmente.',true);return;}
-    form.querySelector('#nf-log-subject').value=subjects[0];
-    status('Materia inserita dall’orario: '+subjects[0]);
-  }
-
-  function addDoneLesson(){
-    const form=$('nf-log-form');if(!form||!draft)return;
-    const date=form.querySelector('#nf-log-date').value;
-    const p=form.querySelector('#nf-log-period').value,d=form.querySelector('#nf-log-day').value;
-    const slot=Number(form.querySelector('#nf-log-slot').value);
-    const houses=[...form.querySelectorAll('input[name="nf-log-house"]:checked')].map(e=>e.value);
+    const houses=[...form.querySelectorAll('input[name="nf-log-house"]:checked')].map(input=>input.value).sort();
     const subject=form.querySelector('#nf-log-subject').value.trim();
-    const professor=form.querySelector('#nf-log-teacher').value.trim();
     const topic=form.querySelector('#nf-log-topic').value.trim();
-    const notes=form.querySelector('#nf-log-notes').value.trim();
-    if(!date || !Number.isFinite(Date.parse(date)) || new Date(date).toISOString().slice(0,10)!==date){
-      status('Inserisci una data valida per la lezione.',true);return;
-    }
+    if(!PERIODS.includes(p)){status('Seleziona anno e settimana.',true);return;}
     if(!houses.length){status('Seleziona almeno una Casa.',true);return;}
-    if(!subject||/^(tempo libero|da programmare)$/i.test(subject)){status('Indica la materia effettivamente svolta.',true);return;}
-    if(!professor){status('Inserisci il nome del professore che ha tenuto la lezione.',true);return;}
-    const row=(draft.schedules[p]||[]).filter(r=>r.day===d)[slot];
-    if(!row){status('Seleziona una fascia oraria valida.',true);return;}
-    if(Object.keys(draft.lessons_done||{}).length>=600){status('Il registro è pieno. Contatta la Presidenza per archiviare le registrazioni.',true);return;}
+    if(!subject||/^(tempo libero|da programmare)$/i.test(subject)){
+      status('Indica una materia effettivamente svolta.',true);return;
+    }
+    const alreadyExists=Object.values(draft.lessons_done||{}).some(entry=>
+      entry.period===p &&
+      String(entry.subject||'').trim().toLocaleLowerCase('it-IT')===subject.toLocaleLowerCase('it-IT') &&
+      String(entry.topic||'').trim().toLocaleLowerCase('it-IT')===topic.toLocaleLowerCase('it-IT') &&
+      JSON.stringify([...(entry.houses||[])].sort())===JSON.stringify(houses)
+    );
+    if(alreadyExists){status('Questa lezione è già segnata come svolta per le Case selezionate.',true);return;}
+    if(Object.keys(draft.lessons_done||{}).length>=600){
+      status('Il promemoria ha raggiunto il limite di registrazioni. Contatta la Presidenza.',true);return;
+    }
     const id=crypto.randomUUID();
-    draft.lessons_done[id]={date,period:p,day:d,slot,houses,subject,professor,topic,notes,start:row.start,end:row.end,recorded_at:new Date().toISOString()};
-    lastLogTeacher=professor;
+    draft.lessons_done[id]={period:p,houses,subject,topic,professor:'',notes:'',recorded_at:new Date().toISOString()};
+    period=p;
     render();
-    status('Lezione segnata come svolta nella bozza. Premi Pubblica online per renderla visibile agli studenti.',false,true);
+    status('Lezione aggiunta al promemoria. Premi Pubblica online per salvarla.',false,true);
   }
-
   function removeDoneLesson(id){
     if(accessRole!=='admin'||!Object.prototype.hasOwnProperty.call(draft.lessons_done||{},id))return;
-    if(!confirm('Rimuovere questa lezione dal registro? La modifica sarà effettiva dopo Pubblica online.'))return;
+    if(!confirm('Rimuovere questa lezione dal promemoria? La modifica sarà effettiva dopo Pubblica online.'))return;
     delete draft.lessons_done[id];
     render();
-    status('Registrazione rimossa dalla bozza. Premi Pubblica online per confermare.');
+    status('Voce rimossa dalla bozza. Premi Pubblica online per confermare.');
   }
   function render() {
     $('nf-editor-nav').querySelectorAll('button').forEach(button =>
@@ -415,7 +393,7 @@
   }
   function onChange(event) {
     const element = event.target;
-    if (element.id === 'nf-log-period' || element.id === 'nf-log-day'){refreshLogSlots();return;}
+    if (element.id === 'nf-log-period'){period=element.value;return;}
     if (element.id === 'nf-edit-period') {period = element.value; render();return;}
     if (element.id === 'nf-edit-day') {day = element.value; render();return;}
     if (element.id === 'nf-show-teachers') { if (accessRole !== 'admin') return; draft.show_teachers = element.checked;dirtyState();return;}
@@ -554,7 +532,7 @@
     if (event.target.closest('#nf-add-teacher') && accessRole === 'admin') addTeacher();
     const remove = event.target.closest('[data-remove-teacher]');
     if (remove && accessRole === 'admin') removeTeacher(remove.dataset.removeTeacher);
-    if(event.target.closest('#nf-log-autofill'))prefillLogSubject();
+
     const deleteLog=event.target.closest('[data-delete-log]');
     if(deleteLog)removeDoneLesson(deleteLog.dataset.deleteLog);
     const pointButton=event.target.closest('[data-points-house][data-points-action]');
