@@ -265,11 +265,28 @@
     dirtyState();
     status('Variazione aggiunta alla bozza: '+HOUSES[house]+(sign>0?' +':' −')+amount+' punti.');
   }
+  function normalizedSpell(value) {
+    return String(value||'').trim().replace(/^incantesim(?:o|i)\s*/i,'')
+      .replace(/^verdimil+i?us$/i,'Verdimilius')
+      .replace(/^riddikulus$/i,'Riddikulus')
+      .toLocaleLowerCase('it-IT');
+  }
+  function spellsInRecord(record) {
+    const topic=String(record.topic||'').trim();
+    const subject=String(record.subject||'').toLocaleLowerCase('it-IT').trim();
+    const isSpellSubject=subject==='incantesimi'||subject==='incantesimo';
+    const known=/\b(riddikulus|expelliarmus|protego|accio|levioso|alohomora|colloportus|verdimil+i?us|lumos|ferio|wingardium leviosa)\b/i;
+    if(!topic || (!isSpellSubject&&!known.test(topic)))return [];
+    return topic.replace(/\bincantesim(?:o|i)\s*(?:di\s+)?/gi,'')
+      .split(/\s*(?:[,;]|\s+e\s+|\s*[–—-]\s*)\s*/i)
+      .map(normalizedSpell).filter(Boolean);
+  }
   function renderDoneEditor() {
     const yearOptions=[1,2].map(year=>
       `<option value="${year}" ${Number(period.split('-')[0])===year?'selected':''}>${year}° anno</option>`).join('');
     const entries=Object.entries(draft.lessons_done||{})
-      .filter(([id,record])=>record && /^\d-[12]$/.test(String(record.period||'')))
+      .filter(([id,record])=>record && /^\d-[12]$/.test(String(record.period||'')) &&
+        spellsInRecord(record).length>0)
       .sort((a,b)=>String(b[1].recorded_at||'').localeCompare(String(a[1].recorded_at||'')));
     const rows=entries.slice(0,50).map(([id,record])=>{
       const title=String(record.topic||'').replace(/^incantesimi?\s*/i,'').trim() ||
@@ -313,8 +330,7 @@
     }
     const duplicate=Object.values(draft.lessons_done||{}).some(entry=>
       entry && String(entry.period||'').startsWith(year+'-') &&
-      String(entry.topic||'').replace(/^incantesimi?\s*/i,'').trim().toLocaleLowerCase('it-IT')===
-        spell.toLocaleLowerCase('it-IT'));
+      spellsInRecord(entry).includes(normalizedSpell(spell)));
     if(duplicate){status('Questo incantesimo è già registrato per l’anno selezionato.',true);return;}
     if(Object.keys(draft.lessons_done||{}).length>=600){
       status('Il registro ha raggiunto il limite. Contatta la Presidenza.',true);return;
