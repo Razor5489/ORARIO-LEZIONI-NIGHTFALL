@@ -40,15 +40,15 @@ Le variazioni vengono applicate come incrementi/decrementi cumulativi. Se due pr
 
 I punteggi iniziali sono `0` per ogni Casa; non viene modificato alcun orario già inserito.
 
-## Promemoria delle lezioni svolte
+## Promemoria degli incantesimi svolti
 
-Nella **stessa pagina degli orari** è presente la sezione **Lezioni svolte**, con tutte le registrazioni salvate, mostrate contemporaneamente e raggruppate per **1° anno / 2° anno** e **Settimana 1 / Settimana 2**. I filtri Anno, Settimana e Casa continuano a modificare soltanto l'orario: non nascondono le lezioni già segnate. I riferimenti alle Case non compaiono nel promemoria.
+Nella stessa pagina degli orari c'è la sezione **Incantesimi svolti**, suddivisa soltanto in **1° anno** e **2° anno**. Le settimane e le Case non sono mostrate e i filtri degli orari non nascondono alcun incantesimo.
 
-I professori aprono **Gestisci orari → Lezioni svolte** usando la password docenti. Inseriscono soltanto l'anno, la settimana e la materia; l'argomento è facoltativo. Non vengono richiesti **data, ora, professore o Casa**.
+Le registrazioni storiche vengono mantenute: gli incantesimi annotati in lezioni diverse o per Case diverse sono riuniti in un elenco senza doppioni. Le lezioni non relative agli incantesimi (es. «Il molliccio») rimangono conservate nell'archivio storico, ma non sono mostrate nella lista degli incantesimi.
 
-Per salvare una nuova voce: **Segna come svolta → Pubblica online**. Le registrazioni esistenti vengono conservate; eventuali associazioni storiche alle Case restano nei dati per compatibilità, ma non sono visualizzate. La Presidenza può eliminare le voci errate.
+I professori aprono **Gestisci orari → Lezioni svolte** e scelgono **Anno scolastico** (1° o 2°) e **Incantesimo svolto**. Poi premono **Segna come svolto → Pubblica online**. Il sistema mantiene il salvataggio collaborativo; le eliminazioni delle registrazioni pregresse restano riservate alla Presidenza.
 
-Le aggiunte simultanee di più professori vengono unite senza sovrascrivere le lezioni degli altri.
+Per compatibilità con i precedenti salvataggi, l'archivio conserva i codici tecnici delle settimane, ma la pagina e il nuovo modulo non li richiedono né li visualizzano.
 
 ## Amministrazione
 
