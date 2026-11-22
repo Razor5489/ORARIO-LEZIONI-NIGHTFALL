@@ -63,35 +63,51 @@
       }).join('')+'</div>';
   }
 
+  function spellNamesFromLesson(entry) {
+    // Old logs may contain a full lesson title or multiple spells grouped
+    // together. Only spell-related records enter the summary.
+    const subject=String(entry.subject||'').toLocaleLowerCase('it-IT').trim();
+    const topic=String(entry.topic||'').trim();
+    const isIncantesimi=subject==='incantesimi' || subject==='incantesimo';
+    const knownSpell=/\b(riddikulus|expelliarmus|protego|accio|levioso|alohomora|colloportus|verdimil+i?us|lumos|ferio|wingardium leviosa)\b/i;
+    if(!isIncantesimi && !(topic && knownSpell.test(topic)))return [];
+    const source=topic || (isIncantesimi ? entry.subject : '');
+    if(!source)return [];
+    return source
+      .replace(/\bincantesimi?\s*(?:di\s+)?/gi,'')
+      .split(/\s*(?:[,;]|\s+e\s+|\s*[–—-]\s*)\s*/i)
+      .map(name=>name.trim().replace(/[.!]+$/,''))
+      .filter(name=>name && !/^il molliccio$/i.test(name));
+  }
+
   function renderDonePublic(data) {
-    // The reminder is a complete list of recorded lessons, independent of the
-    // year/week/house filters, which continue to control only the timetable.
-    const periods=['1-1','1-2','2-1','2-2'];
-    const entries=Object.values(data.lessons_done||{})
-      .filter(entry=>entry && periods.includes(entry.period))
-      .sort((a,b)=>String(b.recorded_at||'').localeCompare(String(a.recorded_at||'')));
-    const sections=periods.map(period=>{
-      const subset=entries.filter(entry=>entry.period===period);
-      if(!subset.length)return '';
-      const [year,week]=period.split('-');
-      const cards=subset.map(entry=>`<article class="nf-completed-item nf-reminder-item">
-        <span class="nf-reminder-check" aria-label="Svolta">✓</span>
-        <div class="nf-reminder-body">
-          <h4>${esc(entry.subject)}</h4>
-          ${entry.topic?`<p class="nf-log-topic">${esc(entry.topic)}</p>`:''}
-        </div>
-      </article>`).join('');
-      return `<section class="nf-reminder-period">
-        <h4 class="nf-reminder-period-title">${year}° anno · Settimana ${week}
-          <span>${subset.length} ${subset.length===1?'lezione':'lezioni'}</span>
+    // Show all registered spells by year, without week or house filtering.
+    // Grouped legacy entries are split, identical spells are shown once.
+    const years=[1,2];
+    const records=Object.values(data.lessons_done||{});
+    const sections=years.map(year=>{
+      const spells=new Map();
+      for(const entry of records){
+        if(!entry || !String(entry.period||'').startsWith(year+'-'))continue;
+        for(const spell of spellNamesFromLesson(entry)){
+          const key=spell.normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+            .toLocaleLowerCase('it-IT').replace(/\s+/g,' ').trim();
+          if(!spells.has(key))spells.set(key,spell);
+        }
+      }
+      const names=[...spells.values()].sort((a,b)=>a.localeCompare(b,'it'));
+      const items=names.map(name=>`<li class="nf-spell-item"><span class="nf-reminder-check" aria-hidden="true">✓</span><span>${esc(name)}</span></li>`).join('');
+      return `<section class="nf-reminder-period nf-spell-year">
+        <h4 class="nf-reminder-period-title">${year}° anno
+          <span>${names.length} ${names.length===1?'incantesimo svolto':'incantesimi svolti'}</span>
         </h4>
-        <div class="nf-completed-grid nf-reminder-grid">${cards}</div>
+        ${items?`<ul class="nf-spell-list">${items}</ul>`:'<p class="nf-log-public-empty">Nessun incantesimo ancora segnato.</p>'}
       </section>`;
-    }).filter(Boolean).join('');
-    return `<div class="nf-section-title"><h3>✓ Lezioni svolte</h3>
-      <span>${entries.length} ${entries.length===1?'lezione completata':'lezioni completate'} in totale</span></div>
-      <p class="nf-log-info">Promemoria completo delle lezioni già fatte, suddiviso per anno e settimana.</p>
-      ${sections||'<div class="nf-log-public-empty">Nessuna lezione ancora segnata come svolta.</div>'}`;
+    }).join('');
+    return `<div class="nf-section-title"><h3>✓ Incantesimi svolti</h3>
+      <span>Promemoria scolastico</span></div>
+      <p class="nf-log-info">Gli incantesimi già svolti, divisi soltanto per anno scolastico.</p>
+      ${sections}`;
   }
 
   document.querySelectorAll('.nf-app').forEach(async app => {
