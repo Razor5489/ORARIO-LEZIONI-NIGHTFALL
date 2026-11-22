@@ -42,18 +42,13 @@ I punteggi iniziali sono `0` per ogni Casa; non viene modificato alcun orario gi
 
 ## Promemoria delle lezioni svolte
 
-Nella **stessa pagina degli orari** è disponibile la sezione **Lezioni svolte**, una semplice lista con spunta delle materie già completate. Gli studenti possono filtrare il promemoria per anno, settimana e Casa.
+Nella **stessa pagina degli orari** è presente la sezione **Lezioni svolte**, con tutte le registrazioni salvate, mostrate contemporaneamente e raggruppate per **1° anno / 2° anno** e **Settimana 1 / Settimana 2**. I filtri Anno, Settimana e Casa continuano a modificare soltanto l'orario: non nascondono le lezioni già segnate. I riferimenti alle Case non compaiono nel promemoria.
 
-I professori aprono **Gestisci orari → Lezioni svolte** con la password docenti e indicano soltanto:
+I professori aprono **Gestisci orari → Lezioni svolte** usando la password docenti. Inseriscono soltanto l'anno, la settimana e la materia; l'argomento è facoltativo. Non vengono richiesti **data, ora, professore o Casa**.
 
-- Anno e settimana
-- Materia svolta
-- Una o più Case interessate
-- Argomento, se necessario (facoltativo)
+Per salvare una nuova voce: **Segna come svolta → Pubblica online**. Le registrazioni esistenti vengono conservate; eventuali associazioni storiche alle Case restano nei dati per compatibilità, ma non sono visualizzate. La Presidenza può eliminare le voci errate.
 
-Non sono richiesti né mostrati **data, ora o professore**. Dopo **Segna come svolta**, premere **Pubblica online** per aggiornare il sito.
-
-Le vecchie registrazioni rimangono disponibili ma vengono mostrate con la stessa grafica semplificata. Le modifiche di professori diversi continuano a unirsi automaticamente; la rimozione di voci già pubblicate è riservata alla Presidenza.
+Le aggiunte simultanee di più professori vengono unite senza sovrascrivere le lezioni degli altri.
 
 ## Amministrazione
 
