@@ -239,8 +239,15 @@
         </div>
       </div>`;
     }).join('');
+    const lastUpdated=typeof draft.points_updated_at==='string'
+      && Number.isFinite(new Date(draft.points_updated_at).getTime())
+      ? new Intl.DateTimeFormat('it-IT',{timeZone:'Europe/Rome',day:'2-digit',
+          month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit',
+          hourCycle:'h23'}).format(new Date(draft.points_updated_at))
+      : 'non ancora registrato';
     return `<section class="nf-section">
       <h3>Coppa delle Case — Punti Casa</h3>
+      <p class="nf-help"><strong>Ultimo aggiornamento pubblicato:</strong> ${escapeHtml(lastUpdated)}</p>
       <p class="nf-help">Assegna o sottrai punti a ciascuna Casa. Puoi registrare più variazioni prima di pubblicare. Quando due professori assegnano punti contemporaneamente, le variazioni vengono sommate senza cancellarsi.</p>
       <div class="nf-points-editor-grid">${cards}</div>
       <p class="nf-help">I punteggi visualizzati comprendono le modifiche ancora in bozza. Clicca <strong>Pubblica online</strong> per renderli visibili agli studenti. Non vengono modificati gli orari delle lezioni.</p>
