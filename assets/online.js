@@ -63,30 +63,35 @@
       }).join('')+'</div>';
   }
 
-  function renderDonePublic(data,state,limit){
-    const items=Object.values(data.lessons_done||{})
-      .filter(entry=>entry && entry.period===`${state.year}-${state.week}` &&
-        (state.house==='tutte'||(entry.houses||[]).includes(state.house)))
+  function renderDonePublic(data) {
+    // The reminder is a complete list of recorded lessons, independent of the
+    // year/week/house filters, which continue to control only the timetable.
+    const periods=['1-1','1-2','2-1','2-2'];
+    const entries=Object.values(data.lessons_done||{})
+      .filter(entry=>entry && periods.includes(entry.period))
       .sort((a,b)=>String(b.recorded_at||'').localeCompare(String(a.recorded_at||'')));
-    const shown=items.slice(0,limit);
-    const cards=shown.map(entry=>{
-      const houses=(entry.houses||[]).map(h=>
-        `<span class="nf-log-badge nf-log-badge-${h}">${esc(HOUSES[h]||h)}</span>`).join('');
-      return `<article class="nf-completed-item nf-reminder-item">
+    const sections=periods.map(period=>{
+      const subset=entries.filter(entry=>entry.period===period);
+      if(!subset.length)return '';
+      const [year,week]=period.split('-');
+      const cards=subset.map(entry=>`<article class="nf-completed-item nf-reminder-item">
         <span class="nf-reminder-check" aria-label="Svolta">✓</span>
         <div class="nf-reminder-body">
           <h4>${esc(entry.subject)}</h4>
           ${entry.topic?`<p class="nf-log-topic">${esc(entry.topic)}</p>`:''}
-          <div class="nf-log-badges">${houses}</div>
         </div>
-      </article>`;
-    }).join('');
+      </article>`).join('');
+      return `<section class="nf-reminder-period">
+        <h4 class="nf-reminder-period-title">${year}° anno · Settimana ${week}
+          <span>${subset.length} ${subset.length===1?'lezione':'lezioni'}</span>
+        </h4>
+        <div class="nf-completed-grid nf-reminder-grid">${cards}</div>
+      </section>`;
+    }).filter(Boolean).join('');
     return `<div class="nf-section-title"><h3>✓ Lezioni svolte</h3>
-      <span>${items.length} ${items.length===1?'lezione completata':'lezioni completate'}</span></div>
-      <p class="nf-log-info">Promemoria delle lezioni già fatte · ${state.year}° anno, settimana ${state.week}</p>
-      ${cards?`<div class="nf-completed-grid nf-reminder-grid">${cards}</div>`:
-        '<div class="nf-log-public-empty">Nessuna lezione ancora segnata come svolta.</div>'}
-      ${items.length>limit?`<button type="button" class="nf-log-more">Mostra altre lezioni (${items.length-limit})</button>`:''}`;
+      <span>${entries.length} ${entries.length===1?'lezione completata':'lezioni completate'} in totale</span></div>
+      <p class="nf-log-info">Promemoria completo delle lezioni già fatte, suddiviso per anno e settimana.</p>
+      ${sections||'<div class="nf-log-public-empty">Nessuna lezione ancora segnata come svolta.</div>'}`;
   }
 
   document.querySelectorAll('.nf-app').forEach(async app => {
@@ -102,18 +107,10 @@
     }
     const state = { year: Number(app.dataset.year) || 1, week: Number(app.dataset.week) || 1, house: app.dataset.house || 'tutte' };
     const display = app.querySelector('.nf-display');
-    let visibleLogCount = 12;
     function renderCompleted() {
       const area = app.querySelector('.nf-completed-log');
-      if (area) area.innerHTML = renderDonePublic(data, state, visibleLogCount);
+      if (area) area.innerHTML = renderDonePublic(data);
     }
-    const logArea = app.querySelector('.nf-completed-log');
-    if (logArea) logArea.addEventListener('click', event => {
-      if (event.target.closest('.nf-log-more')) {
-        visibleLogCount += 20;
-        renderCompleted();
-      }
-    });
 
     function render() {
       const rows = data.schedules?.[`${state.year}-${state.week}`] || [];
@@ -126,9 +123,9 @@
       app.dataset.week = String(state.week);
       app.dataset.house = state.house;
     }
-    app.querySelectorAll('[data-filter="year"] button').forEach(b => b.addEventListener('click', () => { state.year = Number(b.dataset.value); visibleLogCount=12; render(); renderCompleted(); }));
-    app.querySelectorAll('[data-filter="week"] button').forEach(b => b.addEventListener('click', () => { state.week = Number(b.dataset.value); visibleLogCount=12; render(); renderCompleted(); }));
-    app.querySelectorAll('.nf-house-filters button').forEach(b => b.addEventListener('click', () => { state.house = b.dataset.house; visibleLogCount=12; render(); renderCompleted(); }));
+    app.querySelectorAll('[data-filter="year"] button').forEach(b => b.addEventListener('click', () => { state.year = Number(b.dataset.value); render(); }));
+    app.querySelectorAll('[data-filter="week"] button').forEach(b => b.addEventListener('click', () => { state.week = Number(b.dataset.value); render(); }));
+    app.querySelectorAll('.nf-house-filters button').forEach(b => b.addEventListener('click', () => { state.house = b.dataset.house; render(); }));
     app.querySelector('.nf-print')?.addEventListener('click', () => window.print());
     function renderHousePoints() {
       const area=app.querySelector('.nf-house-points');
