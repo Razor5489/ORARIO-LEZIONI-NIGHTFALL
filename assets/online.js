@@ -71,12 +71,13 @@
     const isIncantesimi=subject==='incantesimi' || subject==='incantesimo';
     const knownSpell=/\b(riddikulus|expelliarmus|protego|accio|levioso|alohomora|colloportus|verdimil+i?us|lumos|ferio|wingardium leviosa)\b/i;
     if(!isIncantesimi && !(topic && knownSpell.test(topic)))return [];
-    const source=topic || (isIncantesimi ? entry.subject : '');
-    if(!source)return [];
-    return source
-      .replace(/\bincantesimi?\s*(?:di\s+)?/gi,'')
+    if(!topic)return [];
+    return topic
+      .replace(/\bincantesim(?:o|i)\s*(?:di\s+)?/gi,'')
       .split(/\s*(?:[,;]|\s+e\s+|\s*[–—-]\s*)\s*/i)
       .map(name=>name.trim().replace(/[.!]+$/,''))
+      .map(name=>/^verdimil+i?us$/i.test(name)?'Verdimilius':name)
+      .map(name=>/^riddikulus$/i.test(name)?'Riddikulus':name)
       .filter(name=>name && !/^il molliccio$/i.test(name));
   }
 
