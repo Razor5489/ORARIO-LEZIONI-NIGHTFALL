@@ -267,24 +267,22 @@
   }
   function renderDoneEditor() {
     const periodOptions=PERIODS.map(p=>`<option value="${p}" ${p===period?'selected':''}>${periodLabel(p)}</option>`).join('');
-    const houseOptions=Object.entries(HOUSES).map(([h,name])=>
-      `<label class="nf-log-house-option"><input type="checkbox" name="nf-log-house" value="${h}"> ${escapeHtml(name)}</label>`).join('');
+
     const subjects=subjectsList().filter(s=>s!=='Tempo libero').map(s=>
       `<option value="${escapeHtml(s)}"></option>`).join('');
     const entries=Object.entries(draft.lessons_done||{}).sort((a,b)=>
       String(b[1].recorded_at||'').localeCompare(String(a[1].recorded_at||'')));
     const rows=entries.slice(0,50).map(([id,r])=>{
-      const houses=(r.houses||[]).map(h=>HOUSES[h]||h).join(', ');
       return `<li class="nf-log-editor-item"><div>
         <span class="nf-log-done-check" aria-hidden="true">✓</span>
         <strong>${escapeHtml(r.subject)}</strong>
-        <span class="nf-log-editor-details">${escapeHtml(periodLabel(r.period))} · ${escapeHtml(houses)}</span>
+        <span class="nf-log-editor-details">${escapeHtml(periodLabel(r.period))}</span>
         ${r.topic?`<small>${escapeHtml(r.topic)}</small>`:''}
       </div>${accessRole==='admin'?`<button type="button" class="nf-btn danger" data-delete-log="${escapeHtml(id)}">Rimuovi</button>`:''}</li>`;
     }).join('');
     return `<section class="nf-section nf-log-section">
       <h3>✓ Promemoria delle lezioni svolte</h3>
-      <p class="nf-help">Segna semplicemente quali lezioni sono già state fatte. Non occorre indicare data, orario o professore. Il promemoria sarà visibile agli studenti dopo la pubblicazione.</p>
+      <p class="nf-help">Indica soltanto anno, settimana e materia, con un argomento facoltativo. Gli studenti vedranno tutte le lezioni segnate, senza suddivisione per Casa, dopo la pubblicazione.</p>
       <form id="nf-log-form" class="nf-log-form">
         <div class="nf-log-fields">
           <label>Anno e settimana
@@ -295,10 +293,6 @@
             <datalist id="nf-log-subjects">${subjects}</datalist>
           </label>
         </div>
-        <fieldset class="nf-log-house-field">
-          <legend>Per quali Case è stata svolta?</legend>
-          <div class="nf-log-house-choice">${houseOptions}</div>
-        </fieldset>
         <label>Argomento (facoltativo)
           <input id="nf-log-topic" type="text" maxlength="130" placeholder="Es. Incantesimo Lumos">
         </label>
@@ -315,26 +309,23 @@
     const form=$('nf-log-form');
     if(!form || !draft)return;
     const p=form.querySelector('#nf-log-period').value;
-    const houses=[...form.querySelectorAll('input[name="nf-log-house"]:checked')].map(input=>input.value).sort();
     const subject=form.querySelector('#nf-log-subject').value.trim();
     const topic=form.querySelector('#nf-log-topic').value.trim();
     if(!PERIODS.includes(p)){status('Seleziona anno e settimana.',true);return;}
-    if(!houses.length){status('Seleziona almeno una Casa.',true);return;}
     if(!subject||/^(tempo libero|da programmare)$/i.test(subject)){
       status('Indica una materia effettivamente svolta.',true);return;
     }
     const alreadyExists=Object.values(draft.lessons_done||{}).some(entry=>
       entry.period===p &&
       String(entry.subject||'').trim().toLocaleLowerCase('it-IT')===subject.toLocaleLowerCase('it-IT') &&
-      String(entry.topic||'').trim().toLocaleLowerCase('it-IT')===topic.toLocaleLowerCase('it-IT') &&
-      JSON.stringify([...(entry.houses||[])].sort())===JSON.stringify(houses)
+      String(entry.topic||'').trim().toLocaleLowerCase('it-IT')===topic.toLocaleLowerCase('it-IT')
     );
-    if(alreadyExists){status('Questa lezione è già segnata come svolta per le Case selezionate.',true);return;}
+    if(alreadyExists){status('Questa lezione è già presente nel promemoria per l’anno e la settimana indicati.',true);return;}
     if(Object.keys(draft.lessons_done||{}).length>=600){
       status('Il promemoria ha raggiunto il limite di registrazioni. Contatta la Presidenza.',true);return;
     }
     const id=crypto.randomUUID();
-    draft.lessons_done[id]={period:p,houses,subject,topic,professor:'',notes:'',recorded_at:new Date().toISOString()};
+    draft.lessons_done[id]={period:p,subject,topic,professor:'',notes:'',recorded_at:new Date().toISOString()};
     period=p;
     render();
     status('Lezione aggiunta al promemoria. Premi Pubblica online per salvarla.',false,true);
