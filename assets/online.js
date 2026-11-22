@@ -64,30 +64,29 @@
   }
 
   function renderDonePublic(data,state,limit){
-    const entries=Object.values(data.lessons_done||{})
-      .filter(e=>e && e.period===`${state.year}-${state.week}` &&
-        (state.house==='tutte'||(e.houses||[]).includes(state.house)))
-      .sort((a,b)=>(b.date+' '+b.recorded_at).localeCompare(a.date+' '+a.recorded_at));
-    const shown=entries.slice(0,limit);
-    const cards=shown.map(e=>{
-      const date=e.date.split('-').reverse().join('/');
-      const badges=(e.houses||[]).map(h=>`<span class="nf-log-badge nf-log-badge-${h}">${esc(HOUSES[h]||h)}</span>`).join('');
-      const topic=e.topic?`<p class="nf-log-topic">${esc(e.topic)}</p>`:'';
-      const notes=e.notes?`<p class="nf-log-notes">${esc(e.notes)}</p>`:'';
-      return `<article class="nf-completed-item">
-        <div class="nf-completed-item-heading"><time datetime="${esc(e.date)}">${esc(date)}</time>
-          <span>${esc(e.day)} · ${Number(e.slot)+1}ª lezione · ${esc(e.start)}–${esc(e.end)}</span></div>
-        <h4>${esc(e.subject)}</h4>
-        ${topic}<p class="nf-completed-prof">Prof. ${esc(e.professor)}</p>
-        <div class="nf-log-badges">${badges}</div>${notes}
+    const items=Object.values(data.lessons_done||{})
+      .filter(entry=>entry && entry.period===`${state.year}-${state.week}` &&
+        (state.house==='tutte'||(entry.houses||[]).includes(state.house)))
+      .sort((a,b)=>String(b.recorded_at||'').localeCompare(String(a.recorded_at||'')));
+    const shown=items.slice(0,limit);
+    const cards=shown.map(entry=>{
+      const houses=(entry.houses||[]).map(h=>
+        `<span class="nf-log-badge nf-log-badge-${h}">${esc(HOUSES[h]||h)}</span>`).join('');
+      return `<article class="nf-completed-item nf-reminder-item">
+        <span class="nf-reminder-check" aria-label="Svolta">✓</span>
+        <div class="nf-reminder-body">
+          <h4>${esc(entry.subject)}</h4>
+          ${entry.topic?`<p class="nf-log-topic">${esc(entry.topic)}</p>`:''}
+          <div class="nf-log-badges">${houses}</div>
+        </div>
       </article>`;
     }).join('');
-    return `<div class="nf-section-title"><h3>✦ Registro delle lezioni svolte</h3>
-        <span>${entries.length} ${entries.length===1?'lezione registrata':'lezioni registrate'} · ${state.year}° anno, settimana ${state.week}</span></div>
-        <p class="nf-log-info">Le lezioni qui riportate sono state dichiarate svolte dai professori. Cambia anno, settimana o Casa nei filtri sopra per consultare altri registri.</p>
-        ${cards?`<div class="nf-completed-grid">${cards}</div>`:
-           '<div class="nf-log-public-empty">Nessuna lezione ancora registrata per la selezione corrente.</div>'}
-        ${entries.length>limit?`<button type="button" class="nf-log-more">Mostra altre lezioni (${entries.length-limit} rimanenti)</button>`:''}`;
+    return `<div class="nf-section-title"><h3>✓ Lezioni svolte</h3>
+      <span>${items.length} ${items.length===1?'lezione completata':'lezioni completate'}</span></div>
+      <p class="nf-log-info">Promemoria delle lezioni già fatte · ${state.year}° anno, settimana ${state.week}</p>
+      ${cards?`<div class="nf-completed-grid nf-reminder-grid">${cards}</div>`:
+        '<div class="nf-log-public-empty">Nessuna lezione ancora segnata come svolta.</div>'}
+      ${items.length>limit?`<button type="button" class="nf-log-more">Mostra altre lezioni (${items.length-limit})</button>`:''}`;
   }
 
   document.querySelectorAll('.nf-app').forEach(async app => {
