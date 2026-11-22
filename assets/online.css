@@ -135,3 +135,19 @@
 .nf-manager .nf-log-editor-item small{display:block;margin-top:5px;font-size:11px;color:#8c7b65}
 .nf-manager .nf-log-empty{padding:14px;border:1px dashed #d5c9b2;border-radius:5px;color:#8c7b65;font-size:13px}
 @media(max-width:680px){.nf-completed-log{padding:14px}.nf-completed-grid{grid-template-columns:1fr}.nf-manager .nf-log-fields{grid-template-columns:1fr}.nf-manager .nf-log-editor-item{align-items:flex-start}.nf-manager .nf-log-editor-item button{white-space:nowrap}}
+
+
+/* Promemoria essenziale delle lezioni completate */
+.nf-completed-log .nf-reminder-grid{display:grid;grid-template-columns:1fr;gap:9px}
+.nf-completed-log .nf-reminder-item{display:flex;align-items:flex-start;gap:13px;padding:12px 15px;border-left:3px solid #8b794e;background:#fffefa;box-shadow:none}
+.nf-completed-log .nf-reminder-check{display:inline-flex;align-items:center;justify-content:center;flex:0 0 29px;width:29px;height:29px;margin:1px 0 0;border-radius:50%;background:#e7f0e8;color:#336d4d;font-size:17px;font-weight:850}
+.nf-completed-log .nf-reminder-body{min-width:0;flex:1}
+.nf-completed-log .nf-reminder-body h4{margin:0 0 8px;font:normal 19px/1.3 Georgia,serif}
+.nf-completed-log .nf-reminder-body .nf-log-topic{margin:-3px 0 8px!important;color:#7b715f;font-size:12px;font-weight:500}
+.nf-manager .nf-log-editor-item .nf-log-done-check{display:inline-flex;width:20px;height:20px;align-items:center;justify-content:center;border-radius:50%;background:#e7f0e8;color:#336d4d;margin-right:8px;font-weight:900}
+.nf-manager .nf-log-editor-item>div>strong{font-size:14px;color:#283d43}
+.nf-manager .nf-log-editor-item .nf-log-editor-details{margin:6px 0 0 28px}
+.nf-manager .nf-log-editor-item small{margin-left:28px}
+.nf-manager .nf-log-form{gap:15px}
+.nf-manager .nf-log-section .nf-log-history-heading{margin-top:12px!important}
+@media(max-width:620px){.nf-completed-log .nf-reminder-item{gap:9px;padding:10px}.nf-completed-log .nf-reminder-body h4{font-size:17px}}
