@@ -151,3 +151,13 @@
 .nf-manager .nf-log-form{gap:15px}
 .nf-manager .nf-log-section .nf-log-history-heading{margin-top:12px!important}
 @media(max-width:620px){.nf-completed-log .nf-reminder-item{gap:9px;padding:10px}.nf-completed-log .nf-reminder-body h4{font-size:17px}}
+
+
+/* Registro unico delle lezioni svolte: tutte visibili, senza distinzione per Casa */
+.nf-completed-log .nf-reminder-period{margin:18px 0 22px}
+.nf-completed-log .nf-reminder-period:last-child{margin-bottom:0}
+.nf-completed-log .nf-reminder-period-title{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:0 0 10px;padding:0 0 9px;border-bottom:1px solid #d9cdb7;font:normal 21px/1.3 Georgia,serif;color:#344b52}
+.nf-completed-log .nf-reminder-period-title span{font:600 11px/1.5 system-ui,sans-serif;color:#81745c;letter-spacing:.02em}
+.nf-completed-log .nf-reminder-grid{margin:0}
+.nf-completed-log .nf-reminder-body .nf-log-topic{margin:0!important}
+@media(max-width:640px){.nf-completed-log .nf-reminder-period-title{font-size:18px}}
