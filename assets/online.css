@@ -168,3 +168,9 @@
 .nf-completed-log .nf-spell-item{display:flex;align-items:center;gap:11px;min-height:51px;padding:10px 13px;border:1px solid #e0d5c0;border-radius:7px;background:#fffefa;color:#30434a;font:normal 17px/1.3 Georgia,serif;overflow-wrap:anywhere}
 .nf-completed-log .nf-spell-item .nf-reminder-check{flex:none;margin:0;width:27px;height:27px;font-size:15px}
 @media(max-width:650px){.nf-completed-log .nf-spell-list{grid-template-columns:1fr}.nf-completed-log .nf-spell-item{font-size:16px}}
+
+/* Data e ora dell'ultimo aggiornamento del registro Punti Casa */
+.nf-house-points .nf-points-updated{display:flex;align-items:center;justify-content:flex-end;gap:5px;margin:14px 2px 0!important;padding-top:11px;border-top:1px solid #e3d6c0;color:#80735d;font-size:12px;line-height:1.5;text-align:right;font-weight:500}
+.nf-house-points .nf-points-updated time{color:#4e5c5c;font-variant-numeric:tabular-nums;font-weight:750}
+.nf-house-points .nf-points-updated-icon{color:#aa8e5d;font-size:17px}
+@media(max-width:500px){.nf-house-points .nf-points-updated{justify-content:center;text-align:center;font-size:11px}}
