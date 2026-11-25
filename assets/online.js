@@ -28,7 +28,19 @@
     return `<div class="nf-house-ribbon nf-ribbon-${house}">◆ ${HOUSES[house]}</div><div class="nf-section-title"><h3>Orario della Casa</h3><span>Dal lunedì al venerdì</span></div><section class="nf-day nf-house-view"><div class="nf-table-wrap"><table class="nf-table"><thead><tr><th>FASCIA</th>${DAYS.map(d => `<th>${esc(d)}</th>`).join('')}</tr></thead><tbody>${tableRows}</tbody></table></div></section>`;
   }
 
-  function teacherSection(teachers) {
+  function teacherSection(teachers, leadership) {
+    const administrators=[
+      {key:'preside',label:'Preside',icon:'✦'},
+      {key:'vicepreside',label:'Vicepreside',icon:'✧'}
+    ];
+    const leadershipCards=administrators.map(({key,label,icon})=>{
+      const name=String(leadership?.[key]||'').trim();
+      return `<article class="nf-director nf-director-${key}">
+        <span class="nf-director-icon" aria-hidden="true">${icon}</span>
+        <div><h4>${label}</h4>
+        <p>${name?esc(name):'<em>Da assegnare</em>'}</p></div>
+      </article>`;
+    }).join('');
     const roles = [
       {key: 'primary', label: 'Professore'},
       {key: 'secondary', label: 'Secondo professore'},
@@ -41,7 +53,10 @@
         : '<li class="nf-teacher-empty">Da assegnare</li>';
       return `<article class="nf-teacher"><h4>${esc(subject)}</h4><ul>${members}</ul></article>`;
     }).join('');
-    return `<div class="nf-section-title"><h3>Corpo docenti</h3><span>Elenco ufficiale · Aggiornabile dalla Presidenza</span></div><div class="nf-teachers-grid">${items}</div>`;
+    return `<div class="nf-section-title"><h3>Corpo docenti</h3><span>Direzione scolastica e professori di Hogwarts</span></div>
+      <div class="nf-directors"><div class="nf-directors-heading">Direzione scolastica</div><div class="nf-directors-grid">${leadershipCards}</div></div>
+      <h4 class="nf-teachers-subheading">Professori per materia</h4>
+      <div class="nf-teachers-grid">${items}</div>`;
   }
 
   const HOUSE_POINTS_ORDER=['grifondoro','tassorosso','corvonero','serpeverde'];
@@ -168,7 +183,7 @@
       const area = app.querySelector('.nf-teachers');
       if (!area) return;
       area.hidden = data.show_teachers === false;
-      area.innerHTML = data.show_teachers === false ? '' : teacherSection(data.teachers || {});
+      area.innerHTML = data.show_teachers === false ? '' : teacherSection(data.teachers || {},data.leadership || {});
     }
     window.nfUpdatePublic = function(nextData) {
       data = nextData;
