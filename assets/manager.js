@@ -142,6 +142,8 @@
     if(!original.points)original.points=clone(draft.points);
     if(!draft.lessons_done)draft.lessons_done={};
     if(!original.lessons_done)original.lessons_done={};
+    if(!draft.leadership)draft.leadership={preside:'Lucian Sharp',vicepreside:''};
+    if(!original.leadership)original.leadership=clone(draft.leadership);
     $('nf-manager-login').hidden = true;
     $('nf-editor').hidden = false;
     status('');
@@ -217,7 +219,14 @@
         ${Object.entries(ROLE_NAMES).map(([key,role]) => '<div class="nf-field"><label class="nf-label">' + role + '</label><input type="text" data-teacher="' + escapeHtml(subject) + '" data-role="' + key + '" maxlength="180" value="' + escapeHtml(people[key] || '') + '"></div>').join('')}
         <button class="nf-btn danger" type="button" data-remove-teacher="${escapeHtml(subject)}" aria-label="Rimuovi ${escapeHtml(subject)}">×</button>
       </div>`).join('');
+    const leaders=Object.entries({preside:'Preside',vicepreside:'Vicepreside'})
+      .map(([role,label])=>`<div class="nf-field"><label class="nf-label" for="nf-leader-${role}">${label}</label>
+         <input type="text" id="nf-leader-${role}" data-leadership="${role}" maxlength="150"
+         placeholder="Da assegnare" value="${escapeHtml(draft.leadership?.[role]||'')}"></div>`).join('');
     return `<section class="nf-section"><h3>Corpo docenti</h3>
+      <div class="nf-leadership-editor"><h4>Direzione scolastica</h4><div class="nf-leadership-fields">${leaders}</div>
+        <p class="nf-help">Questi incarichi sono modificabili soltanto con la password amministratore.</p>
+      </div>
       <label><input type="checkbox" id="nf-show-teachers" ${draft.show_teachers !== false ? 'checked' : ''}> Mostra l'elenco dei professori agli studenti</label>
       <p class="nf-help">Puoi cambiare le materie e assegnare o sostituire il professore principale, il secondo professore e quello staff. Lascia vuoti i posti non ancora assegnati.</p>
       <div id="nf-teachers-edit">${items}</div>
@@ -379,6 +388,13 @@
       if (!Number.isSafeInteger(draft.points?.[house]) || Math.abs(draft.points[house])>1000000)
         throw new Error('Il punteggio di '+HOUSES[house]+' non è valido.');
     }
+    if(!draft.leadership || typeof draft.leadership!=='object')
+      throw new Error('I dati della Direzione scolastica non sono validi.');
+    for(const role of ['preside','vicepreside']){
+      const name=String(draft.leadership[role]||'').trim();
+      if(name.length>150)throw new Error('Il nominativo '+role+' è troppo lungo.');
+      draft.leadership[role]=name;
+    }
     for (const [name,people] of Object.entries(draft.teachers)) {
       rewritten[name === oldName ? next : name] = people;
     }
@@ -397,6 +413,12 @@
       if (field === 'subject') row.subjects[element.dataset.house] = element.value;
       else if (field === 'start' || field === 'end') row[field] = element.value;
       dirtyState();return;
+    }
+    const leadershipKey=element.dataset.leadership;
+    if(leadershipKey && ['preside','vicepreside'].includes(leadershipKey) && accessRole==='admin'){
+      draft.leadership[leadershipKey]=element.value;
+      dirtyState();
+      return;
     }
     const key = element.dataset.teacher;
     const role = element.dataset.role;
