@@ -30,6 +30,12 @@ Dopo le modifiche, clicca **Pubblica online**. Il pannello salva tramite `https:
 
 Le password e il token di accesso al Blob non sono presenti nel codice pubblico: Vercel li conserva in variabili d'ambiente protette. Non è necessario concedere ai professori accesso a GitHub, Vercel o Google.
 
+## Direzione scolastica
+
+Nella sezione pubblica **Corpo docenti** sono presentati, in posizione distinta e sopra le materie, i ruoli di **Preside** (Lucian Sharp) e **Vicepreside** (inizialmente non assegnato). Seguono tutti i professori delle materie già presenti.
+
+Il nominativo dei due incarichi può essere modificato da **Gestisci orari → Corpo docenti** tramite la password amministratore, senza modificare il resto dell'organigramma. La password dei docenti non permette di cambiare la Direzione. I dati sono memorizzati nello stesso archivio Vercel Blob degli orari e le modifiche contemporanee vengono unite separatamente per ciascun incarico.
+
 ## Punti Casa
 
 Nella **stessa pagina degli orari** gli studenti vedono la classifica aggiornata di **Grifondoro, Tassorosso, Corvonero e Serpeverde**, ciascuna con il proprio stemma fornito dallo staff. Gli stemmi sono pubblicati come risorsa grafica ottimizzata in `assets/stemmi/case-sprite.webp`.
