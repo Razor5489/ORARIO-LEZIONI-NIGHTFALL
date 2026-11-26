@@ -142,6 +142,34 @@
       ${sections}`;
   }
 
+  // Salva soltanto le preferenze di visualizzazione di questo browser.
+  // Gli orari e i dati scolastici continuano a provenire dal server.
+  const VIEW_STORAGE_KEY='nightfall:orario:visualizzazione:v1';
+  function storageForView() {
+    try { if(window.localStorage) return window.localStorage; } catch (_) {}
+    try { if(window.sessionStorage) return window.sessionStorage; } catch (_) {}
+    return null;
+  }
+  function readViewPreferences() {
+    try {
+      const raw=storageForView()?.getItem(VIEW_STORAGE_KEY);
+      if(!raw)return null;
+      const value=JSON.parse(raw);
+      if(!value || typeof value!=='object' ||
+         ![1,2].includes(value.year) ||
+         ![1,2].includes(value.week) ||
+         !['tutte',...names].includes(value.house))return null;
+      return {year:value.year,week:value.week,house:value.house};
+    }catch(_){return null;}
+  }
+  function saveViewPreferences(state) {
+    try {
+      storageForView()?.setItem(VIEW_STORAGE_KEY,JSON.stringify({
+        year:state.year,week:state.week,house:state.house
+      }));
+    }catch(_){/* Modalità privata o blocco dello storage: i filtri restano utilizzabili. */}
+  }
+
   document.querySelectorAll('.nf-app').forEach(async app => {
     let data;
     try {
@@ -153,7 +181,8 @@
       if (display) display.textContent = "Non è stato possibile caricare gli orari. Aggiorna la pagina.";
       return;
     }
-    const state = { year: Number(app.dataset.year) || 1, week: Number(app.dataset.week) || 1, house: app.dataset.house || 'tutte' };
+    const state = readViewPreferences() ||
+      { year: Number(app.dataset.year) || 1, week: Number(app.dataset.week) || 1, house: app.dataset.house || 'tutte' };
     const display = app.querySelector('.nf-display');
     function renderCompleted() {
       const area = app.querySelector('.nf-completed-log');
@@ -171,9 +200,9 @@
       app.dataset.week = String(state.week);
       app.dataset.house = state.house;
     }
-    app.querySelectorAll('[data-filter="year"] button').forEach(b => b.addEventListener('click', () => { state.year = Number(b.dataset.value); render(); }));
-    app.querySelectorAll('[data-filter="week"] button').forEach(b => b.addEventListener('click', () => { state.week = Number(b.dataset.value); render(); }));
-    app.querySelectorAll('.nf-house-filters button').forEach(b => b.addEventListener('click', () => { state.house = b.dataset.house; render(); }));
+    app.querySelectorAll('[data-filter="year"] button').forEach(b => b.addEventListener('click', () => { state.year = Number(b.dataset.value); render(); saveViewPreferences(state); }));
+    app.querySelectorAll('[data-filter="week"] button').forEach(b => b.addEventListener('click', () => { state.week = Number(b.dataset.value); render(); saveViewPreferences(state); }));
+    app.querySelectorAll('.nf-house-filters button').forEach(b => b.addEventListener('click', () => { state.house = b.dataset.house; render(); saveViewPreferences(state); }));
     app.querySelector('.nf-print')?.addEventListener('click', () => window.print());
     function renderHousePoints() {
       const area=app.querySelector('.nf-house-points');
