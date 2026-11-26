@@ -10,6 +10,12 @@ Il sito mostra i programmi di **1° e 2° anno**, **settimana 1 e 2**, dal luned
 
 I dati pubblici sono letti da `https://nightfall-regolamento-professori.vercel.app/api/orari-public`, che restituisce gli orari dall'archivio Vercel Blob privato. Le modifiche pubblicate sono visibili agli studenti senza effettuare commit a GitHub né attendere nuove distribuzioni GitHub Pages.
 
+## Memoria dei filtri nel browser
+
+Il sito ricorda automaticamente l'**anno (1°/2°)**, la **settimana (1/2)** e la **Casa** selezionati dall'utente, anche dopo il refresh o la riapertura del sito nello stesso browser. La preferenza è salvata soltanto in `localStorage` (con `sessionStorage` come ripiego in caso di indisponibilità). Il salvataggio non contiene password, lezioni, dati dei docenti o Punti Casa; questi ultimi continuano a essere letti dal servizio online.
+
+Se il browser non permette la memorizzazione, i filtri continuano a funzionare normalmente, ma tornano alla selezione predefinita al nuovo caricamento.
+
 ## Gestisci orari
 
 Clicca sul pulsante **⚙ Gestisci orari** nella pagina pubblica. Sono disponibili due livelli di accesso:
